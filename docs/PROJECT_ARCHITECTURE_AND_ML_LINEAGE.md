@@ -18,7 +18,7 @@ The **PAIMANA AI Platform** upgrades the Infrastructure and Project Monitoring D
 3. **Temporal Zero-Leakage Feature Engineering**: Calculation of physical progress lags, S-curve deviations, expenditure burn rates, and financial-to-physical gaps evaluated strictly at snapshot month $M$.
 4. **Ensemble ML Predictive Models**: RandomForest and XGBoost regressors/classifiers trained to predict **Schedule Delay (Months)**, **Cost Overrun (%)**, and **High-Risk Project Tier (0/1)**.
 5. **Strict 80 / 10 / 10 Data Governance**: Partitioning into **80% Training Set**, **10% Test Evaluation Set**, and **10% Held-Out User Test Set** (`user_test_holdout.csv`).
-6. **Google Colab Execution Suite**: Standalone, reproducible Colab notebook ([`notebooks/PAIMANA_ML_Colab.ipynb`](file:///c:/Users/Aneesh/Downloads/103/notebooks/PAIMANA_ML_Colab.ipynb)) for cloud training and artifact export.
+6. **Google Colab Execution Suite**: Standalone, reproducible Colab notebook ([`notebooks/PAIMANA_ML_Colab.ipynb`](notebooks/PAIMANA_ML_Colab.ipynb)) for cloud training and artifact export.
 
 ---
 
@@ -70,22 +70,22 @@ In accordance with strict MoSPI specifications, the platform enforces the follow
 
 ### Components Built:
 
-#### A. Dynamic Schema Guard ([`ml/ingestion/schema_guard.py`](file:///c:/Users/Aneesh/Downloads/103/ml/ingestion/schema_guard.py))
+#### A. Dynamic Schema Guard ([`ml/ingestion/schema_guard.py`](ml/ingestion/schema_guard.py))
 - Dynamic header synonym matching for core fields (`project_code`, `project_name`, `sector`, `ministry`, `implementing_agency`, `state`, `original_cost`, `revised_cost`, `expenditure`, `physical_progress`, `sanction_date`, `original_doc`, `revised_doc`, `snapshot_date`).
 - Returns normalized DataFrames and comprehensive Data Quality Reports without hardcoding column positions.
 
-#### B. Portal Scraper & PDF Parser ([`ml/ingestion/paimana_pdf_table_scraper.py`](file:///c:/Users/Aneesh/Downloads/103/ml/ingestion/paimana_pdf_table_scraper.py) & [`ml/ingestion/paimana_real_pdf_extractor.py`](file:///c:/Users/Aneesh/Downloads/103/ml/ingestion/paimana_real_pdf_extractor.py))
-- Scrapes and downloads official monthly Flash Report PDFs directly from MoSPI servers into [`data/pdfs/`](file:///c:/Users/Aneesh/Downloads/103/data/pdfs/).
-- Parses project monitoring tables into **16,088 real project rows** saved in [`data/processed/paimana_real_2001_2026_dataset.csv`](file:///c:/Users/Aneesh/Downloads/103/data/processed/paimana_real_2001_2026_dataset.csv).
+#### B. Portal Scraper & PDF Parser ([`ml/ingestion/paimana_pdf_table_scraper.py`](ml/ingestion/paimana_pdf_table_scraper.py) & [`ml/ingestion/paimana_real_pdf_extractor.py`](ml/ingestion/paimana_real_pdf_extractor.py))
+- Scrapes and downloads official monthly Flash Report PDFs directly from MoSPI servers into [`data/pdfs/`](data/pdfs/).
+- Parses project monitoring tables into **16,088 real project rows** saved in [`data/processed/paimana_real_2001_2026_dataset.csv`](data/processed/paimana_real_2001_2026_dataset.csv).
 
-#### C. Archive Dataset Panel Generator ([`ml/ingestion/paimana_archive_extractor.py`](file:///c:/Users/Aneesh/Downloads/103/ml/ingestion/paimana_archive_extractor.py))
-- Generates 296 monthly CSV snapshot files in [`data/raw/`](file:///c:/Users/Aneesh/Downloads/103/data/raw/) spanning 2001 through 2026 to ensure full multi-year temporal testing capability.
+#### C. Archive Dataset Panel Generator ([`ml/ingestion/paimana_archive_extractor.py`](ml/ingestion/paimana_archive_extractor.py))
+- Generates 296 monthly CSV snapshot files in [`data/raw/`](data/raw/) spanning 2001 through 2026 to ensure full multi-year temporal testing capability.
 
 ---
 
 ## 4. Feature Engineering & Mathematical Indicators
 
-Located in [`ml/features/engineer_features.py`](file:///c:/Users/Aneesh/Downloads/103/ml/features/engineer_features.py), the feature engineering engine calculates 13 time-aware metrics:
+Located in [`ml/features/engineer_features.py`](ml/features/engineer_features.py), the feature engineering engine calculates 13 time-aware metrics:
 
 $$\text{Target Duration (Months)} = \frac{\text{Original DoC Date} - \text{Sanction Date}}{30.4375}$$
 
@@ -107,7 +107,7 @@ $$\text{Financial-Physical Gap} = \left(\frac{\text{Cumulative Expenditure}}{\te
 
 ## 5. Machine Learning Training & Evaluation Results
 
-Located in [`ml/training/train_pipeline.py`](file:///c:/Users/Aneesh/Downloads/103/ml/training/train_pipeline.py), models are trained on the multi-year panel using an 80/10/10 split:
+Located in [`ml/training/train_pipeline.py`](ml/training/train_pipeline.py), models are trained on the multi-year panel using an 80/10/10 split:
 
 ### Evaluation Metrics (10% Test Evaluation Set):
 - **Schedule Delay Model (RandomForest / XGBoost Regressor)**:
@@ -121,24 +121,24 @@ Located in [`ml/training/train_pipeline.py`](file:///c:/Users/Aneesh/Downloads/1
 - **High-Risk Project Tier Classifier**:
   - Classification Accuracy: **99.8%**
 
-### Model Artifacts Exported ([`data/models/`](file:///c:/Users/Aneesh/Downloads/103/data/models/)):
+### Model Artifacts Exported ([`data/models/`](data/models/)):
 1. `paimana_delay_model.joblib`: Serialized schedule delay regressor weights.
 2. `paimana_cost_model.joblib`: Serialized cost overrun regressor weights.
 3. `paimana_risk_model.joblib`: Serialized risk tier classifier weights.
 4. `feature_engineer.joblib`: Preprocessing transformer dictionary.
 
 ### User Held-Out Verification Dataset:
-- Exported as [`data/processed/user_test_holdout.csv`](file:///c:/Users/Aneesh/Downloads/103/data/processed/user_test_holdout.csv) and [`user_test_holdout.json`](file:///c:/Users/Aneesh/Downloads/103/data/processed/user_test_holdout.json) specifically reserved for independent user testing.
+- Exported as [`data/processed/user_test_holdout.csv`](data/processed/user_test_holdout.csv) and [`user_test_holdout.json`](data/processed/user_test_holdout.json) specifically reserved for independent user testing.
 
 ---
 
 ## 6. Google Colab Execution Suite
 
-The standalone notebook [`notebooks/PAIMANA_ML_Colab.ipynb`](file:///c:/Users/Aneesh/Downloads/103/notebooks/PAIMANA_ML_Colab.ipynb) is fully updated and formatted with valid JSON (`JSON VALID! Total cells: 7`).
+The standalone notebook [`notebooks/PAIMANA_ML_Colab.ipynb`](notebooks/PAIMANA_ML_Colab.ipynb) is fully updated and formatted with valid JSON (`JSON VALID! Total cells: 7`).
 
 ### Steps to Run on Google Colab:
-1. Go to [Colab](https://colab.research.google.com/) and upload [`PAIMANA_ML_Colab.ipynb`](file:///c:/Users/Aneesh/Downloads/103/notebooks/PAIMANA_ML_Colab.ipynb).
-2. Upload [`data/processed/paimana_real_2001_2026_dataset.csv`](file:///c:/Users/Aneesh/Downloads/103/data/processed/paimana_real_2001_2026_dataset.csv) (or raw CSV files/zip archive).
+1. Go to [Colab](https://colab.research.google.com/) and upload [`PAIMANA_ML_Colab.ipynb`](notebooks/PAIMANA_ML_Colab.ipynb).
+2. Upload [`data/processed/paimana_real_2001_2026_dataset.csv`](data/processed/paimana_real_2001_2026_dataset.csv) (or raw CSV files/zip archive).
 3. Click **Runtime -> Run all** (`Ctrl + F9`).
 4. The notebook will automatically train the models, display metric evaluations, and download all 4 trained model artifacts and the held-out test CSV to your computer.
 

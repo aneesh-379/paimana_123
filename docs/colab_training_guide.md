@@ -6,7 +6,7 @@ This guide provides step-by-step instructions to train the PAIMANA AI Machine Le
 
 ## Step 1: Open Google Colab
 1. Go to [https://colab.research.google.com/](https://colab.research.google.com/).
-2. Click **Upload** and upload the file [`PAIMANA_ML_Colab.ipynb`](file:///c:/Users/Aneesh/Downloads/103/notebooks/PAIMANA_ML_Colab.ipynb) located in the `notebooks/` directory.
+2. Click **Upload** and upload the file [`PAIMANA_ML_Colab.ipynb`](notebooks/PAIMANA_ML_Colab.ipynb) located in the `notebooks/` directory.
 
 ---
 
