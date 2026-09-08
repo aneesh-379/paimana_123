@@ -1,0 +1,13 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1002,Project PAIM-1002 - Bridge Construction,Water Resources,Ministry of Jal Shakti,NTPC,Telangana,4443.86,4443.86,1585.5,37.9,2003-05-01,2007-06-09,2007-06-09,2004-10-22,0,4.8,0
+PAIM-1027,Project PAIM-1027 - Gas Pipeline Expansion,Railways,Ministry of Railways,NHAI,Tamil Nadu,2444.01,2444.01,489.32,19.9,2004-01-01,2008-06-08,2008-06-08,2004-10-27,0,2.7,0
+PAIM-1113,Project PAIM-1113 - Expressway,Telecommunications,Ministry of Communications,ONGC,Uttar Pradesh,2293.4,2293.4,499.56,25.0,2004-01-01,2007-06-14,2007-06-14,2004-10-27,0,3.3,0
+PAIM-1278,Project PAIM-1278 - Metro Line Phase II,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,POWERGRID,Haryana,3805.34,4441.26,224.15,5.8,2003-05-01,2008-03-05,2013-10-01,2004-10-22,97,42.97,1
+PAIM-1301,Project PAIM-1301 - Gas Pipeline Expansion,Railways,Ministry of Railways,GAIL,Tamil Nadu,7260.34,7725.81,486.96,6.6,2003-05-01,2009-01-29,2010-12-22,2004-10-22,33,16.49,1
+PAIM-1322,Project PAIM-1322 - Bridge Construction,Telecommunications,Ministry of Communications,ONGC,Assam,2678.11,2678.11,1369.19,57.5,2002-01-01,2007-01-05,2007-01-05,2004-10-17,0,0.4,0
+PAIM-1347,Project PAIM-1347 - Railway Line Electrification,Water Resources,Ministry of Jal Shakti,RVNL,Andhra Pradesh,7325.36,7325.36,1187.49,16.0,2004-01-01,2009-09-01,2009-09-01,2004-10-27,0,-1.7,0
+PAIM-1416,Project PAIM-1416 - Metro Line Phase II,Water Resources,Ministry of Jal Shakti,DMRC,Rajasthan,2011.63,2011.63,1641.25,82.3,2002-01-01,2005-05-15,2005-05-15,2004-10-17,0,1.6,0
+PAIM-1451,Project PAIM-1451 - Gas Pipeline Expansion,Water Resources,Ministry of Jal Shakti,POWERGRID,Gujarat,1929.03,2006.72,565.99,26.9,2002-01-01,2007-11-01,2009-07-23,2004-10-17,30,4.83,1
+PAIM-1475,Project PAIM-1475 - Solar Park Development,Railways,Ministry of Railways,GAIL,Assam,916.95,986.47,214.01,20.6,2002-01-01,2007-03-06,2009-07-14,2004-10-17,41,9.1,1
+PAIM-1476,Project PAIM-1476 - Solar Park Development,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,DMRC,Uttar Pradesh,4420.49,4420.49,2804.18,58.9,2002-09-01,2006-05-13,2006-05-13,2004-10-20,0,-0.8,0
+PAIM-1490,Project PAIM-1490 - Solar Park Development,Coal,Ministry of Coal,RVNL,West Bengal,5418.6,5418.6,2670.08,50.0,2002-09-01,2007-02-07,2007-02-07,2004-10-20,0,0.7,0

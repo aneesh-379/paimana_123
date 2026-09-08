@@ -1,0 +1,25 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1037,Project PAIM-1037 - Metro Line Phase II,Water Resources,Ministry of Jal Shakti,POWERGRID,Assam,6734.79,7723.08,5810.42,84.7,2006-09-01,2009-06-17,2010-04-06,2010-10-10,14,14.67,1
+PAIM-1044,Project PAIM-1044 - Railway Line Electrification,Power & Renewable Energy,Ministry of Power,POWERGRID,Rajasthan,2388.33,2388.33,2046.18,100.0,2005-05-01,2008-08-13,2008-08-13,2010-10-02,0,4.6,0
+PAIM-1070,Project PAIM-1070 - Railway Line Electrification,Road Transport & Highways,Ministry of Road Transport and Highways,NHAI,Odisha,7405.36,9853.65,7224.18,70.0,2008-01-01,2009-07-24,2010-06-25,2010-10-17,16,39.67,1
+PAIM-1100,Project PAIM-1100 - Railway Line Electrification,Power & Renewable Energy,Ministry of Power,NTPC,Punjab,4302.09,5002.88,5002.88,87.3,2007-05-01,2009-06-19,2009-11-12,2010-10-12,7,16.29,1
+PAIM-1126,Project PAIM-1126 - Expressway,Road Transport & Highways,Ministry of Road Transport and Highways,GAIL,Uttar Pradesh,2456.02,2714.76,2351.28,77.5,2006-01-01,2007-09-23,2008-06-22,2010-10-07,13,10.53,1
+PAIM-1136,Project PAIM-1136 - Gas Pipeline Expansion,Road Transport & Highways,Ministry of Road Transport and Highways,GAIL,Haryana,3764.01,3764.01,3492.48,100.0,2003-06-01,2006-11-12,2006-11-12,2010-10-22,0,4.9,0
+PAIM-1147,Project PAIM-1147 - Solar Park Development,Power & Renewable Energy,Ministry of Power,Coal India Limited,Assam,3587.32,3819.37,3212.97,77.5,2006-01-01,2009-05-15,2010-05-06,2010-10-07,17,6.47,1
+PAIM-1165,Project PAIM-1165 - Solar Park Development,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,RVNL,Haryana,5718.18,7497.2,3206.38,37.2,2006-09-01,2012-02-02,2016-07-27,2010-10-10,78,31.11,1
+PAIM-1172,Project PAIM-1172 - Expressway,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,ONGC,Gujarat,1570.46,1732.1,1022.65,67.5,2004-02-01,2007-01-16,2008-01-07,2010-10-27,17,10.29,1
+PAIM-1174,Project PAIM-1174 - Thermal Power Unit,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,Indian Railways,Rajasthan,5982.73,6703.56,1821.65,29.1,2008-01-01,2013-02-03,2015-12-20,2010-10-17,50,14.46,1
+PAIM-1205,Project PAIM-1205 - Railway Line Electrification,Power & Renewable Energy,Ministry of Power,NTPC,West Bengal,2256.8,2719.26,1832.89,60.0,2006-01-01,2010-03-11,2013-05-29,2010-10-07,56,20.49,1
+PAIM-1230,Project PAIM-1230 - Bridge Construction,Railways,Ministry of Railways,NHAI,Maharashtra,1144.82,1578.84,1036.84,60.0,2004-02-01,2005-10-23,2007-02-17,2010-10-27,23,37.91,1
+PAIM-1243,Project PAIM-1243 - Bridge Construction,Coal,Ministry of Coal,Coal India Limited,Bihar,5454.95,7802.06,5132.94,60.0,2006-01-01,2009-09-12,2014-02-15,2010-10-07,77,43.03,1
+PAIM-1244,Project PAIM-1244 - Railway Line Electrification,Coal,Ministry of Coal,Indian Railways,Odisha,6093.35,8530.74,4481.15,60.0,2004-02-01,2008-10-07,2011-06-21,2010-10-27,47,40.0,1
+PAIM-1271,Project PAIM-1271 - Gas Pipeline Expansion,Power & Renewable Energy,Ministry of Power,DMRC,Odisha,2192.87,2192.87,1667.89,77.5,2006-09-01,2012-01-03,2012-01-03,2010-10-10,0,-1.3,0
+PAIM-1288,Project PAIM-1288 - Metro Line Phase II,Telecommunications,Ministry of Communications,NHPC,Rajasthan,2302.45,2302.45,2302.45,100.0,2008-09-01,2010-02-23,2010-02-23,2010-10-21,0,4.7,0
+PAIM-1307,Project PAIM-1307 - Solar Park Development,Telecommunications,Ministry of Communications,Coal India Limited,Rajasthan,4867.35,4867.35,2920.75,61.1,2008-01-01,2012-09-06,2012-09-06,2010-10-17,0,1.9,0
+PAIM-1323,Project PAIM-1323 - Gas Pipeline Expansion,Coal,Ministry of Coal,NHAI,Odisha,6717.97,6717.97,3343.89,55.1,2008-01-01,2013-04-04,2013-04-04,2010-10-17,0,0.9,0
+PAIM-1356,Project PAIM-1356 - Solar Park Development,Railways,Ministry of Railways,GAIL,Madhya Pradesh,3856.2,3856.2,3856.2,100.0,2004-10-01,2009-02-07,2009-02-07,2010-10-30,0,3.1,0
+PAIM-1364,Project PAIM-1364 - Railway Line Electrification,Coal,Ministry of Coal,NHPC,Maharashtra,769.37,889.36,342.45,37.6,2006-09-01,2011-11-04,2016-09-02,2010-10-10,84,15.6,1
+PAIM-1395,Project PAIM-1395 - Railway Line Electrification,Coal,Ministry of Coal,DMRC,Punjab,5739.59,6632.68,3484.86,60.0,2005-05-01,2009-05-10,2015-07-26,2010-10-02,108,15.56,1
+PAIM-1410,Project PAIM-1410 - Thermal Power Unit,Telecommunications,Ministry of Communications,CPWD,Gujarat,3651.89,3801.08,708.03,16.4,2009-05-01,2013-10-07,2015-04-06,2010-10-23,26,10.51,1
+PAIM-1425,Project PAIM-1425 - Thermal Power Unit,Road Transport & Highways,Ministry of Road Transport and Highways,NHPC,Assam,942.28,942.28,9.82,1.2,2010-01-01,2015-08-03,2015-08-03,2010-10-28,69,12.31,1
+PAIM-1439,Project PAIM-1439 - Thermal Power Unit,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,NHAI,Andhra Pradesh,2534.98,2923.6,2215.97,84.2,2007-05-01,2008-11-21,2009-05-29,2010-10-12,9,15.33,1

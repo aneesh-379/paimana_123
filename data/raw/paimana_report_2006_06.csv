@@ -1,0 +1,15 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1058,Project PAIM-1058 - Railway Line Electrification,Telecommunications,Ministry of Communications,ONGC,West Bengal,1246.65,1628.51,481.47,27.7,2003-01-01,2008-10-01,2012-07-17,2006-06-14,66,30.63,1
+PAIM-1103,Project PAIM-1103 - Bridge Construction,Power & Renewable Energy,Ministry of Power,POWERGRID,Assam,5885.29,6526.48,6299.92,84.2,2003-01-01,2004-07-24,2005-04-23,2006-06-14,13,10.89,1
+PAIM-1152,Project PAIM-1152 - Bridge Construction,Telecommunications,Ministry of Communications,ONGC,Punjab,396.36,424.16,347.13,82.0,2001-09-01,2003-02-23,2003-06-28,2006-06-07,6,7.01,0
+PAIM-1210,Project PAIM-1210 - Gas Pipeline Expansion,Power & Renewable Energy,Ministry of Power,Coal India Limited,Uttar Pradesh,4998.39,4998.39,234.74,5.5,2005-09-01,2011-02-02,2011-02-02,2006-06-28,22,16.23,1
+PAIM-1229,Project PAIM-1229 - Expressway,Power & Renewable Energy,Ministry of Power,NHAI,Odisha,534.63,560.92,128.19,23.0,2004-05-01,2008-09-07,2010-07-11,2006-06-20,32,8.05,1
+PAIM-1268,Project PAIM-1268 - Bridge Construction,Coal,Ministry of Coal,NHPC,West Bengal,3378.92,4253.89,1513.61,41.5,2002-05-01,2007-07-04,2009-09-29,2006-06-09,39,25.9,1
+PAIM-1283,Project PAIM-1283 - Metro Line Phase II,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,Coal India Limited,Odisha,5394.05,5621.24,1645.49,28.2,2005-01-01,2008-04-15,2009-02-24,2006-06-25,15,10.83,1
+PAIM-1324,Project PAIM-1324 - Railway Line Electrification,Coal,Ministry of Coal,CPWD,Telangana,6392.44,6392.44,4392.25,61.1,2003-09-01,2008-05-07,2008-05-07,2006-06-17,0,-0.8,0
+PAIM-1325,Project PAIM-1325 - Metro Line Phase II,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,Coal India Limited,Punjab,2356.9,2356.9,1159.52,42.9,2004-05-01,2009-08-03,2009-08-03,2006-06-20,0,0.0,0
+PAIM-1385,Project PAIM-1385 - Metro Line Phase II,Road Transport & Highways,Ministry of Road Transport and Highways,CPWD,Karnataka,6371.96,7704.56,5518.67,65.5,2002-05-01,2003-10-23,2004-10-13,2006-06-09,17,20.91,1
+PAIM-1394,Project PAIM-1394 - Railway Line Electrification,Coal,Ministry of Coal,DMRC,Uttar Pradesh,965.12,1053.35,740.21,71.5,2003-01-01,2005-03-21,2006-06-25,2006-06-14,22,9.14,1
+PAIM-1435,Project PAIM-1435 - Railway Line Electrification,Power & Renewable Energy,Ministry of Power,NHAI,Punjab,2900.1,2900.1,314.96,10.9,2005-09-01,2008-11-14,2008-11-14,2006-06-28,29,9.99,1
+PAIM-1453,Project PAIM-1453 - Metro Line Phase II,Railways,Ministry of Railways,CPWD,Haryana,7880.33,7880.33,5080.39,58.9,2004-05-01,2008-01-11,2008-01-11,2006-06-20,0,4.2,0
+PAIM-1462,Project PAIM-1462 - Bridge Construction,Water Resources,Ministry of Jal Shakti,Indian Railways,Gujarat,3626.52,3626.52,2479.05,61.0,2003-01-01,2008-10-31,2008-10-31,2006-06-14,0,4.7,0

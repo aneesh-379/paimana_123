@@ -1,0 +1,5 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1109,Project PAIM-1109 - Expressway,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,NTPC,Maharashtra,690.14,690.14,167.14,23.5,2001-08-01,2005-04-12,2005-04-12,2002-05-28,0,3.4,0
+PAIM-1302,Project PAIM-1302 - Thermal Power Unit,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,NHPC,Maharashtra,6108.62,6108.62,2616.19,39.9,2001-08-01,2003-08-21,2003-08-21,2002-05-28,0,0.1,0
+PAIM-1348,Project PAIM-1348 - Gas Pipeline Expansion,Water Resources,Ministry of Jal Shakti,NHPC,Rajasthan,7354.14,7354.14,858.25,12.6,2001-08-01,2004-06-16,2004-06-16,2002-05-28,35,21.44,1
+PAIM-1386,Project PAIM-1386 - Expressway,Water Resources,Ministry of Jal Shakti,Coal India Limited,Punjab,2416.09,2416.09,177.79,6.8,2001-08-01,2006-03-08,2006-03-08,2002-05-28,39,16.42,1

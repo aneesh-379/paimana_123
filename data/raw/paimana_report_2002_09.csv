@@ -1,0 +1,7 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1102,Project PAIM-1102 - Thermal Power Unit,Power & Renewable Energy,Ministry of Power,Indian Railways,Assam,8362.4,8362.4,1808.19,20.9,2001-12-01,2004-03-20,2004-03-20,2002-09-27,7,10.16,1
+PAIM-1200,Project PAIM-1200 - Bridge Construction,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,ONGC,Madhya Pradesh,6764.8,7321.86,1177.27,18.1,2001-04-01,2005-06-09,2006-03-29,2002-09-23,14,21.18,1
+PAIM-1234,Project PAIM-1234 - Metro Line Phase II,Power & Renewable Energy,Ministry of Power,DMRC,Madhya Pradesh,1922.59,2146.29,0.0,0.0,2001-04-01,2006-11-01,2010-11-30,2002-09-23,71,29.92,1
+PAIM-1248,Project PAIM-1248 - Thermal Power Unit,Road Transport & Highways,Ministry of Road Transport and Highways,POWERGRID,Assam,2504.02,2504.02,416.38,16.4,2001-12-01,2007-06-03,2007-06-03,2002-09-27,0,2.3,0
+PAIM-1353,Project PAIM-1353 - Gas Pipeline Expansion,Telecommunications,Ministry of Communications,GAIL,Punjab,6032.52,6032.52,503.22,9.2,2001-12-01,2005-10-11,2005-10-11,2002-09-27,23,15.13,1
+PAIM-1463,Project PAIM-1463 - Expressway,Water Resources,Ministry of Jal Shakti,GAIL,Andhra Pradesh,3590.15,3590.15,936.79,26.7,2001-12-01,2005-02-13,2005-02-13,2002-09-27,0,2.5,0

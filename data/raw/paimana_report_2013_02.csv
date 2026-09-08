@@ -1,0 +1,15 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1079,Project PAIM-1079 - Metro Line Phase II,Railways,Ministry of Railways,CPWD,Haryana,4500.0,5753.02,3397.14,60.0,2006-06-01,2008-03-22,2009-06-26,2013-02-24,22,27.84,1
+PAIM-1096,Project PAIM-1096 - Solar Park Development,Coal,Ministry of Coal,Coal India Limited,Karnataka,6852.07,7917.21,2661.73,37.8,2010-05-01,2014-12-06,2017-03-03,2013-02-14,39,18.65,1
+PAIM-1148,Project PAIM-1148 - Metro Line Phase II,Coal,Ministry of Coal,RVNL,Uttar Pradesh,8009.62,10136.82,8259.36,81.0,2009-09-01,2011-02-23,2011-10-11,2013-02-12,11,26.56,1
+PAIM-1193,Project PAIM-1193 - Bridge Construction,Water Resources,Ministry of Jal Shakti,RVNL,Telangana,3708.11,3708.11,3367.69,87.5,2011-01-01,2013-05-20,2013-05-20,2013-02-19,0,-1.4,0
+PAIM-1236,Project PAIM-1236 - Bridge Construction,Power & Renewable Energy,Ministry of Power,POWERGRID,Andhra Pradesh,1369.28,1607.18,454.77,27.5,2009-09-01,2015-03-04,2016-11-23,2013-02-12,30,17.37,1
+PAIM-1256,Project PAIM-1256 - Bridge Construction,Water Resources,Ministry of Jal Shakti,Coal India Limited,Haryana,478.67,478.67,396.8,84.6,2009-01-01,2013-11-06,2013-11-06,2013-02-09,0,1.0,0
+PAIM-1281,Project PAIM-1281 - Bridge Construction,Railways,Ministry of Railways,Indian Railways,Gujarat,4325.28,6127.24,4088.32,60.0,2006-06-01,2010-03-12,2012-11-23,2013-02-24,47,41.66,1
+PAIM-1284,Project PAIM-1284 - Metro Line Phase II,Road Transport & Highways,Ministry of Road Transport and Highways,NHAI,Rajasthan,1968.0,2274.75,1567.68,61.0,2006-06-01,2009-12-12,2012-01-07,2013-02-24,36,15.59,1
+PAIM-1289,Project PAIM-1289 - Expressway,Railways,Ministry of Railways,NTPC,Tamil Nadu,4478.35,5342.48,2977.28,60.0,2005-02-01,2009-04-11,2012-04-07,2013-02-19,52,19.3,1
+PAIM-1309,Project PAIM-1309 - Gas Pipeline Expansion,Telecommunications,Ministry of Communications,NHPC,Odisha,7511.66,7511.66,1394.39,18.4,2012-05-01,2017-03-06,2017-03-06,2013-02-25,0,-1.1,0
+PAIM-1314,Project PAIM-1314 - Railway Line Electrification,Railways,Ministry of Railways,NHPC,Madhya Pradesh,2872.99,3159.1,1947.26,69.0,2007-09-01,2010-03-19,2011-05-13,2013-02-01,20,9.96,1
+PAIM-1338,Project PAIM-1338 - Bridge Construction,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,CPWD,Telangana,5083.31,5456.93,2716.04,44.7,2011-09-01,2013-10-20,2014-08-09,2013-02-22,14,18.9,1
+PAIM-1365,Project PAIM-1365 - Bridge Construction,Water Resources,Ministry of Jal Shakti,NHPC,Gujarat,1643.32,1851.46,1343.72,67.5,2006-06-01,2008-12-17,2010-03-23,2013-02-24,22,12.67,1
+PAIM-1491,Project PAIM-1491 - Thermal Power Unit,Water Resources,Ministry of Jal Shakti,CPWD,Punjab,1233.51,1582.8,1371.85,77.5,2010-05-01,2012-03-21,2013-11-19,2013-02-14,29,33.98,1

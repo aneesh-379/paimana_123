@@ -1,0 +1,11 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1019,Project PAIM-1019 - Railway Line Electrification,Power & Renewable Energy,Ministry of Power,Indian Railways,Andhra Pradesh,938.6,938.6,259.3,31.2,2003-07-01,2005-03-22,2005-03-22,2004-04-26,11,7.95,1
+PAIM-1040,Project PAIM-1040 - Railway Line Electrification,Power & Renewable Energy,Ministry of Power,DMRC,Uttar Pradesh,4038.6,4038.6,1745.58,44.3,2002-11-01,2006-04-14,2006-04-14,2004-04-24,0,-0.8,0
+PAIM-1076,Project PAIM-1076 - Railway Line Electrification,Railways,Ministry of Railways,CPWD,Haryana,1333.82,1333.82,82.96,7.0,2003-07-01,2008-01-06,2008-01-06,2004-04-26,32,22.35,1
+PAIM-1084,Project PAIM-1084 - Bridge Construction,Coal,Ministry of Coal,DMRC,Gujarat,242.11,257.02,76.36,27.0,2002-11-01,2006-02-13,2006-11-13,2004-04-24,13,15.83,1
+PAIM-1219,Project PAIM-1219 - Gas Pipeline Expansion,Coal,Ministry of Coal,NHPC,Haryana,1024.04,1024.04,201.79,22.2,2003-07-01,2007-06-10,2007-06-10,2004-04-26,0,0.5,0
+PAIM-1231,Project PAIM-1231 - Gas Pipeline Expansion,Power & Renewable Energy,Ministry of Power,GAIL,Uttar Pradesh,3997.13,3997.13,296.53,6.7,2003-07-01,2007-02-10,2007-02-10,2004-04-26,54,53.67,1
+PAIM-1387,Project PAIM-1387 - Bridge Construction,Railways,Ministry of Railways,NHAI,Karnataka,4915.05,5633.74,1023.17,18.9,2002-11-01,2006-02-13,2008-02-18,2004-04-24,35,37.6,1
+PAIM-1422,Project PAIM-1422 - Solar Park Development,Telecommunications,Ministry of Communications,ONGC,Rajasthan,4968.4,4968.4,1417.53,27.3,2003-07-01,2005-04-21,2005-04-21,2004-04-26,24,16.45,1
+PAIM-1449,Project PAIM-1449 - Expressway,Power & Renewable Energy,Ministry of Power,NHPC,Bihar,4976.93,6067.63,2747.86,42.4,2001-07-01,2005-04-11,2007-07-08,2004-04-16,39,26.3,1
+PAIM-1498,Project PAIM-1498 - Metro Line Phase II,Railways,Ministry of Railways,RVNL,Tamil Nadu,1783.81,1783.81,1320.65,68.2,2002-11-01,2004-12-20,2004-12-20,2004-04-24,0,-0.9,0

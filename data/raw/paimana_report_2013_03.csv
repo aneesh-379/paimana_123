@@ -1,0 +1,12 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1001,Project PAIM-1001 - Bridge Construction,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,NHPC,Madhya Pradesh,5148.8,5369.59,4171.15,79.3,2007-10-01,2009-11-19,2010-07-28,2013-03-03,12,4.29,1
+PAIM-1052,Project PAIM-1052 - Metro Line Phase II,Water Resources,Ministry of Jal Shakti,POWERGRID,Madhya Pradesh,7533.06,9116.58,5787.02,70.3,2011-02-01,2013-04-21,2015-04-04,2013-03-22,34,34.4,1
+PAIM-1120,Project PAIM-1120 - Expressway,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,ONGC,Bihar,7473.71,7473.71,1597.11,22.2,2012-06-01,2014-07-21,2014-07-21,2013-03-28,21,18.36,1
+PAIM-1168,Project PAIM-1168 - Railway Line Electrification,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,DMRC,Bihar,4358.43,4612.07,1823.64,45.4,2011-02-01,2014-02-15,2016-01-08,2013-03-22,33,9.52,1
+PAIM-1280,Project PAIM-1280 - Gas Pipeline Expansion,Power & Renewable Energy,Ministry of Power,Indian Railways,Telangana,6677.44,7172.26,6451.17,84.2,2009-10-01,2012-12-14,2014-07-04,2013-03-14,27,7.41,1
+PAIM-1294,Project PAIM-1294 - Expressway,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,NTPC,Madhya Pradesh,2363.14,2363.14,2115.91,100.0,2010-06-01,2012-01-22,2012-01-22,2013-03-17,0,3.6,0
+PAIM-1372,Project PAIM-1372 - Railway Line Electrification,Telecommunications,Ministry of Communications,RVNL,Tamil Nadu,4019.31,4704.28,4236.34,80.8,2009-02-01,2011-04-22,2011-10-07,2013-03-12,8,17.04,1
+PAIM-1380,Project PAIM-1380 - Bridge Construction,Railways,Ministry of Railways,POWERGRID,Maharashtra,5235.39,5235.39,5235.39,100.0,2009-10-01,2011-09-21,2011-09-21,2013-03-14,0,3.0,0
+PAIM-1383,Project PAIM-1383 - Solar Park Development,Railways,Ministry of Railways,GAIL,Andhra Pradesh,6071.66,6071.66,6071.66,100.0,2005-03-01,2009-09-06,2009-09-06,2013-03-19,0,3.5,0
+PAIM-1390,Project PAIM-1390 - Solar Park Development,Water Resources,Ministry of Jal Shakti,Coal India Limited,Karnataka,5840.2,7457.86,3941.97,60.0,2005-11-01,2009-01-14,2010-02-16,2013-03-24,19,27.7,1
+PAIM-1478,Project PAIM-1478 - Gas Pipeline Expansion,Telecommunications,Ministry of Communications,CPWD,Tamil Nadu,2864.86,3369.07,2434.24,70.0,2010-06-01,2012-05-21,2013-10-28,2013-03-17,25,21.12,1

@@ -1,0 +1,29 @@
+{
+  "train_samples": 4243,
+  "eval_samples": 530,
+  "holdout_samples": 531,
+  "delay_rmse": 6.543,
+  "delay_mae": 3.78,
+  "delay_r2": 0.907,
+  "cost_rmse": 2.921,
+  "cost_mae": 1.718,
+  "cost_r2": 0.936,
+  "risk_accuracy": 0.998,
+  "feature_names": [
+    "original_cost",
+    "revised_cost",
+    "expenditure",
+    "physical_progress",
+    "cost_expenditure_ratio",
+    "schedule_elapsed_months",
+    "target_duration_months",
+    "schedule_elapsed_ratio",
+    "financial_progress_pct",
+    "physical_vs_financial_gap",
+    "schedule_variance_ratio",
+    "cost_escalation_velocity",
+    "sector_encoded",
+    "ministry_encoded",
+    "state_encoded"
+  ]
+}

@@ -1,0 +1,22 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1032,Project PAIM-1032 - Metro Line Phase II,Road Transport & Highways,Ministry of Road Transport and Highways,NTPC,Bihar,4311.99,4311.99,359.73,8.7,2015-04-01,2019-02-09,2019-02-09,2016-01-26,17,11.96,1
+PAIM-1039,Project PAIM-1039 - Railway Line Electrification,Railways,Ministry of Railways,GAIL,Bihar,3691.49,3881.23,328.03,8.9,2014-08-01,2019-10-04,2021-08-26,2016-01-23,33,13.22,1
+PAIM-1070,Project PAIM-1070 - Railway Line Electrification,Road Transport & Highways,Ministry of Road Transport and Highways,NHAI,Odisha,7405.36,10343.3,6649.92,60.0,2008-01-01,2009-07-24,2010-06-25,2016-01-19,16,39.67,1
+PAIM-1169,Project PAIM-1169 - Railway Line Electrification,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,Indian Railways,Maharashtra,5240.97,6525.74,4414.17,77.0,2011-12-01,2015-05-14,2017-06-08,2016-01-09,36,24.51,1
+PAIM-1174,Project PAIM-1174 - Thermal Power Unit,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,Indian Railways,Rajasthan,5982.73,6847.73,4236.64,60.0,2008-01-01,2013-02-03,2015-12-20,2016-01-19,50,14.46,1
+PAIM-1198,Project PAIM-1198 - Metro Line Phase II,Water Resources,Ministry of Jal Shakti,CPWD,Andhra Pradesh,4024.96,4445.93,2723.85,69.0,2010-08-01,2013-06-16,2014-11-01,2016-01-02,24,10.46,1
+PAIM-1264,Project PAIM-1264 - Gas Pipeline Expansion,Power & Renewable Energy,Ministry of Power,RVNL,Telangana,3759.13,3759.13,2076.87,60.2,2013-04-01,2018-01-05,2018-01-05,2016-01-16,0,-0.4,0
+PAIM-1265,Project PAIM-1265 - Bridge Construction,Telecommunications,Ministry of Communications,CPWD,Bihar,5680.35,5680.35,5639.28,97.9,2012-08-01,2016-01-13,2016-01-13,2016-01-13,0,-2.0,0
+PAIM-1288,Project PAIM-1288 - Metro Line Phase II,Telecommunications,Ministry of Communications,NHPC,Rajasthan,2302.45,2302.45,2302.45,100.0,2008-09-01,2010-02-23,2010-02-23,2016-01-23,0,4.7,0
+PAIM-1295,Project PAIM-1295 - Railway Line Electrification,Water Resources,Ministry of Jal Shakti,POWERGRID,Assam,6845.25,8183.52,5182.22,73.2,2011-12-01,2014-12-15,2015-12-06,2016-01-09,17,19.55,1
+PAIM-1298,Project PAIM-1298 - Gas Pipeline Expansion,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,NHAI,Uttar Pradesh,7182.32,8241.13,7555.05,82.1,2011-12-01,2016-01-09,2016-11-19,2016-01-09,15,14.74,1
+PAIM-1307,Project PAIM-1307 - Solar Park Development,Telecommunications,Ministry of Communications,Coal India Limited,Rajasthan,4867.35,4867.35,4741.38,100.0,2008-01-01,2012-09-06,2012-09-06,2016-01-19,0,1.9,0
+PAIM-1310,Project PAIM-1310 - Bridge Construction,Road Transport & Highways,Ministry of Road Transport and Highways,NHAI,West Bengal,2824.49,2824.49,1902.63,63.8,2014-08-01,2016-11-18,2016-11-18,2016-01-23,0,0.4,0
+PAIM-1323,Project PAIM-1323 - Gas Pipeline Expansion,Coal,Ministry of Coal,NHAI,Odisha,6717.97,6717.97,6717.97,100.0,2008-01-01,2013-04-04,2013-04-04,2016-01-19,0,0.9,0
+PAIM-1352,Project PAIM-1352 - Bridge Construction,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,NHPC,Karnataka,5612.87,5612.87,5606.63,100.0,2011-04-01,2014-06-14,2014-06-14,2016-01-05,0,-0.1,0
+PAIM-1375,Project PAIM-1375 - Expressway,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,RVNL,Gujarat,8386.02,9139.27,3944.06,43.4,2013-12-01,2017-01-14,2019-05-04,2016-01-20,40,14.7,1
+PAIM-1410,Project PAIM-1410 - Thermal Power Unit,Telecommunications,Ministry of Communications,CPWD,Gujarat,3651.89,4035.53,2854.18,67.5,2009-05-01,2013-10-07,2015-04-06,2016-01-25,26,10.51,1
+PAIM-1420,Project PAIM-1420 - Bridge Construction,Water Resources,Ministry of Jal Shakti,Coal India Limited,Odisha,1077.38,1119.7,145.49,15.2,2014-08-01,2019-06-06,2020-04-16,2016-01-23,15,10.1,1
+PAIM-1425,Project PAIM-1425 - Thermal Power Unit,Road Transport & Highways,Ministry of Road Transport and Highways,NHPC,Assam,942.28,1058.23,653.71,60.0,2010-01-01,2015-08-03,2019-07-22,2016-01-30,69,12.31,1
+PAIM-1458,Project PAIM-1458 - Gas Pipeline Expansion,Road Transport & Highways,Ministry of Road Transport and Highways,Coal India Limited,Uttar Pradesh,5049.95,5049.95,2438.58,46.6,2015-04-01,2016-12-21,2016-12-21,2016-01-26,0,0.4,0
+PAIM-1493,Project PAIM-1493 - Gas Pipeline Expansion,Water Resources,Ministry of Jal Shakti,POWERGRID,Assam,5640.7,6594.32,4595.88,65.5,2011-12-01,2014-12-15,2016-02-29,2016-01-09,21,16.91,1

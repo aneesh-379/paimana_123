@@ -1,0 +1,21 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1023,Project PAIM-1023 - Gas Pipeline Expansion,Power & Renewable Energy,Ministry of Power,Indian Railways,Telangana,4921.8,5985.25,3017.92,44.1,2020-12-01,2025-10-06,2028-01-02,2025-01-09,39,21.61,1
+PAIM-1067,Project PAIM-1067 - Thermal Power Unit,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,NHAI,Bihar,1544.8,2075.88,1179.03,65.5,2020-12-01,2022-06-24,2023-09-28,2025-01-09,22,34.38,1
+PAIM-1086,Project PAIM-1086 - Thermal Power Unit,Water Resources,Ministry of Jal Shakti,RVNL,Maharashtra,5276.35,5369.35,720.07,12.8,2023-08-01,2028-12-02,2029-09-21,2025-01-22,14,4.53,1
+PAIM-1119,Project PAIM-1119 - Expressway,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,GAIL,Tamil Nadu,1830.96,1830.96,1628.08,100.0,2021-08-01,2023-03-24,2023-03-24,2025-01-12,0,4.7,0
+PAIM-1125,Project PAIM-1125 - Railway Line Electrification,Water Resources,Ministry of Jal Shakti,Indian Railways,Telangana,2109.36,2363.02,1853.3,84.2,2021-08-01,2024-04-17,2025-06-11,2025-01-12,20,12.03,1
+PAIM-1153,Project PAIM-1153 - Thermal Power Unit,Water Resources,Ministry of Jal Shakti,RVNL,Tamil Nadu,6585.7,8698.07,5092.63,60.0,2017-09-01,2020-01-19,2021-11-21,2025-01-22,32,32.08,1
+PAIM-1159,Project PAIM-1159 - Solar Park Development,Coal,Ministry of Coal,NHPC,Odisha,2264.82,2424.91,515.71,21.2,2022-12-01,2027-06-08,2029-02-27,2025-01-19,30,11.57,1
+PAIM-1184,Project PAIM-1184 - Railway Line Electrification,Coal,Ministry of Coal,NHPC,Madhya Pradesh,2624.59,2700.05,490.54,18.4,2022-12-01,2028-09-30,2030-02-15,2025-01-19,24,4.7,1
+PAIM-1195,Project PAIM-1195 - Thermal Power Unit,Water Resources,Ministry of Jal Shakti,DMRC,Andhra Pradesh,3029.23,3029.23,3029.23,100.0,2020-04-01,2023-01-16,2023-01-16,2025-01-05,0,4.1,0
+PAIM-1197,Project PAIM-1197 - Metro Line Phase II,Telecommunications,Ministry of Communications,GAIL,Punjab,6983.48,8503.12,4338.65,60.0,2017-01-01,2020-08-13,2022-11-09,2025-01-19,39,21.76,1
+PAIM-1201,Project PAIM-1201 - Metro Line Phase II,Road Transport & Highways,Ministry of Road Transport and Highways,Coal India Limited,Andhra Pradesh,7617.11,7965.5,2628.53,37.6,2023-08-01,2026-04-17,2026-11-13,2025-01-22,10,11.76,1
+PAIM-1214,Project PAIM-1214 - Gas Pipeline Expansion,Coal,Ministry of Coal,NHPC,Haryana,2537.27,2537.27,2337.02,100.0,2019-08-01,2022-11-13,2022-11-13,2025-01-01,0,0.3,0
+PAIM-1246,Project PAIM-1246 - Bridge Construction,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,NHAI,Assam,6688.05,6688.05,5921.54,100.0,2020-12-01,2023-05-20,2023-05-20,2025-01-09,0,-1.6,0
+PAIM-1304,Project PAIM-1304 - Expressway,Railways,Ministry of Railways,NTPC,Assam,4046.8,4046.8,3942.55,100.0,2017-01-01,2022-10-02,2022-10-02,2025-01-19,0,-1.3,0
+PAIM-1327,Project PAIM-1327 - Expressway,Road Transport & Highways,Ministry of Road Transport and Highways,RVNL,Gujarat,4866.43,5272.31,2745.75,60.0,2018-05-01,2020-03-21,2021-02-20,2025-01-24,16,8.34,1
+PAIM-1339,Project PAIM-1339 - Railway Line Electrification,Telecommunications,Ministry of Communications,RVNL,Punjab,5167.99,5167.99,5167.99,100.0,2019-08-01,2023-03-13,2023-03-13,2025-01-01,0,1.0,0
+PAIM-1393,Project PAIM-1393 - Thermal Power Unit,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,DMRC,Assam,3551.83,3551.83,3352.96,100.0,2018-05-01,2021-06-14,2021-06-14,2025-01-24,0,-1.6,0
+PAIM-1411,Project PAIM-1411 - Railway Line Electrification,Power & Renewable Energy,Ministry of Power,NTPC,Bihar,1034.4,1403.59,933.42,60.0,2017-01-01,2020-07-14,2023-02-13,2025-01-19,45,35.69,1
+PAIM-1424,Project PAIM-1424 - Bridge Construction,Power & Renewable Energy,Ministry of Power,GAIL,Odisha,7339.42,7339.42,6533.5,100.0,2022-12-01,2024-05-24,2024-05-24,2025-01-19,0,2.5,0
+PAIM-1467,Project PAIM-1467 - Gas Pipeline Expansion,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,NTPC,Odisha,815.13,1182.4,701.96,60.0,2017-09-01,2021-09-10,2026-03-05,2025-01-22,78,45.06,1

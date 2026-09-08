@@ -1,0 +1,8 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1058,Project PAIM-1058 - Railway Line Electrification,Telecommunications,Ministry of Communications,ONGC,West Bengal,1246.65,1246.65,45.69,3.4,2003-01-01,2008-10-01,2008-10-01,2003-10-28,66,30.63,1
+PAIM-1103,Project PAIM-1103 - Bridge Construction,Power & Renewable Energy,Ministry of Power,POWERGRID,Assam,5885.29,5885.29,1956.2,35.4,2003-01-01,2004-07-24,2004-07-24,2003-10-28,13,10.89,1
+PAIM-1152,Project PAIM-1152 - Bridge Construction,Telecommunications,Ministry of Communications,ONGC,Punjab,396.36,413.35,368.48,92.7,2001-09-01,2003-02-23,2003-06-28,2003-10-21,6,7.01,0
+PAIM-1268,Project PAIM-1268 - Bridge Construction,Coal,Ministry of Coal,NHPC,West Bengal,3378.92,3719.19,380.43,8.9,2002-05-01,2007-07-04,2009-09-29,2003-10-23,39,25.9,1
+PAIM-1385,Project PAIM-1385 - Metro Line Phase II,Road Transport & Highways,Ministry of Road Transport and Highways,CPWD,Karnataka,6371.96,6890.19,6307.58,82.3,2002-05-01,2003-10-23,2004-10-13,2003-10-23,17,20.91,1
+PAIM-1394,Project PAIM-1394 - Railway Line Electrification,Coal,Ministry of Coal,DMRC,Uttar Pradesh,965.12,965.12,177.66,19.5,2003-01-01,2005-03-21,2005-03-21,2003-10-28,22,9.14,1
+PAIM-1462,Project PAIM-1462 - Bridge Construction,Water Resources,Ministry of Jal Shakti,Indian Railways,Gujarat,3626.52,3626.52,562.1,15.6,2003-01-01,2008-10-31,2008-10-31,2003-10-28,0,4.7,0

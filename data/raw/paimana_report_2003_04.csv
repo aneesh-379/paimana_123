@@ -1,0 +1,6 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1007,Project PAIM-1007 - Gas Pipeline Expansion,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,NHPC,Bihar,4198.33,4198.33,3114.6,80.1,2001-03-01,2003-10-17,2003-10-17,2003-04-20,0,1.9,0
+PAIM-1066,Project PAIM-1066 - Metro Line Phase II,Coal,Ministry of Coal,RVNL,Rajasthan,3149.6,3149.6,790.66,23.2,2002-07-01,2004-08-19,2004-08-19,2003-04-27,12,8.55,1
+PAIM-1349,Project PAIM-1349 - Metro Line Phase II,Water Resources,Ministry of Jal Shakti,GAIL,Gujarat,1203.38,1203.38,452.62,35.9,2002-07-01,2004-01-22,2004-01-22,2003-04-27,9,17.9,1
+PAIM-1438,Project PAIM-1438 - Thermal Power Unit,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,CPWD,Gujarat,3566.79,3566.79,715.68,22.6,2002-07-01,2006-05-11,2006-05-11,2003-04-27,0,-0.8,0
+PAIM-1460,Project PAIM-1460 - Expressway,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,POWERGRID,Madhya Pradesh,1577.39,1577.39,91.95,5.5,2002-07-01,2006-11-07,2006-11-07,2003-04-27,33,32.22,1

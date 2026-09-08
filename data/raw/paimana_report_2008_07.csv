@@ -1,0 +1,14 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1001,Project PAIM-1001 - Bridge Construction,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,NHPC,Madhya Pradesh,5148.8,5148.8,1362.92,23.2,2007-10-01,2009-11-19,2009-11-19,2008-07-27,12,4.29,1
+PAIM-1007,Project PAIM-1007 - Gas Pipeline Expansion,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,NHPC,Bihar,4198.33,4198.33,4086.28,100.0,2001-03-01,2003-10-17,2003-10-17,2008-07-22,0,1.9,0
+PAIM-1014,Project PAIM-1014 - Gas Pipeline Expansion,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,POWERGRID,Andhra Pradesh,2625.86,3313.81,1711.48,60.0,2003-02-01,2008-05-05,2012-02-19,2008-07-04,66,26.2,1
+PAIM-1066,Project PAIM-1066 - Metro Line Phase II,Coal,Ministry of Coal,RVNL,Rajasthan,3149.6,3418.97,2494.12,76.7,2002-07-01,2004-08-19,2005-04-27,2008-07-29,12,8.55,1
+PAIM-1079,Project PAIM-1079 - Metro Line Phase II,Railways,Ministry of Railways,CPWD,Haryana,4500.0,5265.73,4172.46,85.3,2006-06-01,2008-03-22,2009-06-26,2008-07-20,22,27.84,1
+PAIM-1281,Project PAIM-1281 - Bridge Construction,Railways,Ministry of Railways,Indian Railways,Gujarat,4325.28,5426.48,1325.66,25.1,2006-06-01,2010-03-12,2012-11-23,2008-07-20,47,41.66,1
+PAIM-1284,Project PAIM-1284 - Metro Line Phase II,Road Transport & Highways,Ministry of Road Transport and Highways,NHAI,Rajasthan,1968.0,2155.46,817.44,38.4,2006-06-01,2009-12-12,2012-01-07,2008-07-20,36,15.59,1
+PAIM-1289,Project PAIM-1289 - Expressway,Railways,Ministry of Railways,NTPC,Tamil Nadu,4478.35,5342.48,2876.22,53.1,2005-02-01,2009-04-11,2012-04-07,2008-07-15,52,19.3,1
+PAIM-1349,Project PAIM-1349 - Metro Line Phase II,Water Resources,Ministry of Jal Shakti,GAIL,Gujarat,1203.38,1418.74,1235.02,76.7,2002-07-01,2004-01-22,2004-07-29,2008-07-29,9,17.9,1
+PAIM-1365,Project PAIM-1365 - Bridge Construction,Water Resources,Ministry of Jal Shakti,NHPC,Gujarat,1643.32,1770.51,1054.73,66.4,2006-06-01,2008-12-17,2010-03-23,2008-07-20,22,12.67,1
+PAIM-1419,Project PAIM-1419 - Gas Pipeline Expansion,Railways,Ministry of Railways,NHPC,West Bengal,7286.06,7286.06,6471.15,100.0,2004-06-01,2007-04-17,2007-04-17,2008-07-10,0,2.7,0
+PAIM-1438,Project PAIM-1438 - Thermal Power Unit,Urban Infrastructure & Metro,Ministry of Housing and Urban Affairs,CPWD,Gujarat,3566.79,3566.79,3426.15,100.0,2002-07-01,2006-05-11,2006-05-11,2008-07-29,0,-0.8,0
+PAIM-1460,Project PAIM-1460 - Expressway,Petroleum & Natural Gas,Ministry of Petroleum and Natural Gas,POWERGRID,Madhya Pradesh,1577.39,2085.67,1334.86,60.0,2002-07-01,2006-11-07,2008-09-29,2008-07-29,33,32.22,1

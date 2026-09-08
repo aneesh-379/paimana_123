@@ -1,0 +1,5 @@
+project_code,project_name,sector,ministry,implementing_agency,state,original_cost,revised_cost,expenditure,physical_progress,sanction_date,original_doc,revised_doc,snapshot_date,target_final_delay_months,target_cost_overrun_pct,target_is_high_risk
+PAIM-1322,Project PAIM-1322 - Bridge Construction,Telecommunications,Ministry of Communications,ONGC,Assam,2678.11,2678.11,479.12,17.9,2002-01-01,2007-01-05,2007-01-05,2002-10-28,0,0.4,0
+PAIM-1416,Project PAIM-1416 - Metro Line Phase II,Water Resources,Ministry of Jal Shakti,DMRC,Rajasthan,2011.63,2011.63,529.24,25.5,2002-01-01,2005-05-15,2005-05-15,2002-10-28,0,1.6,0
+PAIM-1451,Project PAIM-1451 - Gas Pipeline Expansion,Water Resources,Ministry of Jal Shakti,POWERGRID,Gujarat,1929.03,1929.03,86.3,4.8,2002-01-01,2007-11-01,2007-11-01,2002-10-28,30,4.83,1
+PAIM-1475,Project PAIM-1475 - Solar Park Development,Railways,Ministry of Railways,GAIL,Assam,916.95,916.95,30.2,3.5,2002-01-01,2007-03-06,2007-03-06,2002-10-28,41,9.1,1

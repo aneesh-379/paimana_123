@@ -1,0 +1,3781 @@
+You are the lead architect, senior full-stack engineer, data engineer, ML engineer, MLOps engineer, UI/UX engineer, security engineer, QA engineer, and technical project manager for this entire project.
+
+You are NOT building a toy hackathon dashboard.
+
+You are building a serious, production-quality prototype for:
+
+SIH 2026 Problem Statement SIH26103
+"Use case on web-based integrated project-monitoring platform"
+
+Organization:
+Ministry of Statistics and Programme Implementation (MoSPI)
+
+Department:
+Data Informatics & Innovation Division (DIID)
+
+Theme:
+Smart Automation
+
+Category:
+Software
+
+Core objective:
+Transform PAIMANA's descriptive infrastructure-project monitoring into a predictive, explainable, risk-prioritized, early-warning and decision-support platform.
+
+============================================================
+0. ABSOLUTE RULES
+============================================================
+
+1. DO NOT fabricate PAIMANA data.
+
+2. DO NOT invent project names, project codes, costs, ministries, states, dates, project progress, or government statistics.
+
+3. The official PAIMANA portal is the primary source.
+
+4. The PAIMANA public dashboard is:
+
+https://paimana-proj.mospi.gov.in/Home/PublicDashboardNew
+
+5. The PAIMANA dashboard provides filters including:
+   - Sector
+   - Ministry / Department
+   - State / UT
+   - Project Cost
+   - Month & Year
+
+6. The dashboard exposes downloadable CSV/XLSX data.
+
+7. The user will provide/download the CSV from PAIMANA.
+
+8. The application MUST inspect the actual CSV headers at runtime/import time before assuming a schema.
+
+9. Never silently rename an unknown field.
+
+10. Maintain:
+    - raw source field name
+    - normalized internal field name
+    - transformation documentation
+
+11. If a required field is absent:
+    - mark it unavailable
+    - do NOT fabricate it
+    - do NOT silently substitute an unrelated field
+    - explain what analytical capability is affected
+
+12. This system must distinguish:
+    - observed facts
+    - derived metrics
+    - model predictions
+    - AI-generated explanations
+    - recommendations
+
+13. LLM output must NEVER be treated as ground truth.
+
+14. ML predictions must NEVER be represented as guaranteed outcomes.
+
+15. The platform is a decision-support system, NOT an autonomous government decision-maker.
+
+16. No automatic legal action.
+17. No automatic contractor blacklisting.
+18. No automatic financial sanction.
+19. No fabricated notices.
+20. No fake government authentication.
+
+21. Do not add computer vision, drone imagery, image recognition, satellite-image analysis, or other vision components unless explicitly requested later.
+
+22. Prefer open-source technologies because the SIH statement explicitly prefers open-source tools/software.
+
+23. Build the project incrementally and keep every phase working.
+
+24. Do not jump directly to UI mockups.
+
+25. Build:
+    DATA → DATABASE → FEATURE ENGINEERING → ML → API → AGENTS → WORKFLOWS → UI → TESTING → DEPLOYMENT.
+
+============================================================
+1. SOURCE-OF-TRUTH REQUIREMENT
+============================================================
+
+Before implementing the project:
+
+A. Inspect the supplied PAIMANA CSV.
+
+B. Inspect the official PAIMANA dashboard.
+
+C. Inspect available official PAIMANA monthly reports.
+
+D. Build a source inventory.
+
+Create:
+
+docs/source-inventory.md
+
+It must contain:
+
+SOURCE 1
+Official PAIMANA public dashboard
+URL:
+https://paimana-proj.mospi.gov.in/Home/PublicDashboardNew
+
+SOURCE 2
+Official PAIMANA monthly reports
+
+SOURCE 3
+User-provided PAIMANA CSV
+
+For every source document:
+
+- URL/path
+- source type
+- reporting month
+- fields available
+- coverage
+- limitations
+- whether it is current or historical
+- whether it can be used for ML training
+- whether it can be used only for dashboard analytics
+
+DO NOT assume that one current CSV is enough to train a valid temporal early-warning model.
+
+============================================================
+2. UNDERSTAND THE ACTUAL PAIMANA DATA MODEL
+============================================================
+
+The dashboard currently exposes project-level concepts such as:
+
+- Sector
+- Line Ministry / Ministry / Department
+- Implementing Agency
+- Project Code
+- Project Name
+- Original Cost
+- Revised Cost
+- Expenditure
+- Physical Progress
+- Original Date of Commissioning / Original End Date
+- Revised Date of Commissioning / Revised Date
+- Sanction / Approval Date
+- State / UT where available
+
+Official monthly PAIMANA reports additionally contain information for:
+
+- ongoing projects
+- completed projects
+- newly added projects
+- ministry-wise aggregation
+- state-wise aggregation
+- sector-wise aggregation
+- physical progress
+- original cost
+- revised cost
+- expenditure
+- original/target completion date
+- revised completion date
+- actual completion date for completed projects
+
+Do not assume all fields exist in every CSV snapshot.
+
+============================================================
+3. IMPORTANT ML WARNING: TEMPORAL DATA LEAKAGE
+============================================================
+
+This is one of the most important requirements.
+
+NEVER train a model using a project's final revised cost to predict whether that same project will eventually experience cost overrun.
+
+NEVER use actual completion date to predict a delay that happened before completion.
+
+NEVER use future observations.
+
+The model must simulate:
+
+"At month M, what could we have predicted using ONLY information available by month M?"
+
+Example:
+
+Project:
+P
+
+Snapshot:
+January 2024
+
+Available:
+- original cost
+- expenditure as of January 2024
+- physical progress as of January 2024
+- original target date
+- revised target date ONLY if it had already been revised by January 2024
+- sector
+- ministry
+- agency
+- project age
+- other fields available by January 2024
+
+Do NOT use:
+- revised cost that appeared in 2025
+- actual completion date from 2026
+- future physical progress
+- future expenditure
+- future revised dates
+
+The training pipeline must be stage-aware and time-aware.
+
+============================================================
+4. PRIMARY PRODUCT
+============================================================
+
+Build:
+
+PAIMANA AI
+Predictive Infrastructure Monitoring & Early Warning Platform
+
+The platform should answer four questions:
+
+1. WHAT is likely to go wrong?
+2. WHY is it likely to go wrong?
+3. WHICH projects need attention first?
+4. WHAT evidence-based intervention should an administrator consider?
+
+The core flow:
+
+PAIMANA DATA
+      ↓
+DATA QUALITY ENGINE
+      ↓
+HISTORICAL PROJECT PANEL
+      ↓
+FEATURE ENGINEERING
+      ↓
+STATISTICAL BASELINES
+      ↓
+ML MODELS
+      ↓
+RISK ENGINE
+      ↓
+EXPLAINABILITY
+      ↓
+EARLY WARNING ENGINE
+      ↓
+AGENTIC ANALYSIS
+      ↓
+API
+      ↓
+ADMIN DASHBOARD
+      ↓
+PROJECT INTELLIGENCE ASSISTANT
+
+============================================================
+5. TECHNOLOGY STACK
+============================================================
+
+Use:
+
+Frontend:
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Recharts
+- TanStack Table
+- Leaflet or MapLibre only for geographic visualization where actual geographic data exists
+- no fake map coordinates
+
+Backend:
+- Python
+- FastAPI
+- Pydantic
+- SQLAlchemy
+
+Database:
+- PostgreSQL
+- Supabase PostgreSQL is acceptable
+- PostGIS if geographic coordinates become legitimately available
+
+ML:
+- Python
+- pandas
+- NumPy
+- scikit-learn
+- XGBoost
+- LightGBM only if useful
+- SHAP
+- statsmodels
+- joblib
+
+Data:
+- CSV
+- official PAIMANA monthly reports
+- normalized parquet files for efficient internal processing
+
+LLM:
+- provider abstraction
+- OpenAI-compatible API OR Gemini OR local model
+- do not couple the entire backend to one provider
+
+Deployment:
+- Docker
+- docker-compose for local development
+
+Testing:
+- pytest
+- Playwright
+- Vitest where appropriate
+
+============================================================
+6. PROJECT STRUCTURE
+============================================================
+
+Create:
+
+paimana-ai/
+│
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── features/
+│   ├── lib/
+│   ├── hooks/
+│   ├── types/
+│   ├── styles/
+│   └── tests/
+│
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── config.py
+│   │   ├── api/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   ├── repositories/
+│   │   ├── ml/
+│   │   ├── agents/
+│   │   ├── workflows/
+│   │   ├── workers/
+│   │   ├── security/
+│   │   └── utils/
+│   ├── tests/
+│   └── requirements.txt
+│
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   ├── snapshots/
+│   ├── features/
+│   └── models/
+│
+├── ml/
+│   ├── ingestion/
+│   ├── preprocessing/
+│   ├── features/
+│   ├── training/
+│   ├── evaluation/
+│   ├── explainability/
+│   └── inference/
+│
+├── scripts/
+│
+├── docs/
+│
+├── docker/
+│
+├── docker-compose.yml
+├── .env.example
+├── README.md
+└── LICENSE
+
+============================================================
+7. PHASE 1 — PROJECT INITIALIZATION
+============================================================
+
+Create the monorepo.
+
+Initialize:
+
+frontend
+backend
+ml/data pipeline
+
+Create README.
+
+Create environment configuration.
+
+Create:
+.env.example
+
+Variables should include:
+
+DATABASE_URL=
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+
+LLM_PROVIDER=
+LLM_API_KEY=
+LLM_MODEL=
+
+MODEL_STORAGE_PATH=
+
+CORS_ORIGINS=
+
+ENVIRONMENT=development
+
+LOG_LEVEL=INFO
+
+============================================================
+8. PHASE 2 — SOURCE DATA IMPORT
+============================================================
+
+Create a CSV ingestion command:
+
+python -m ml.ingestion.import_csv <path>
+
+The importer must:
+
+1. Read CSV.
+2. Detect encoding.
+3. Detect delimiter.
+4. Inspect headers.
+5. Print schema.
+6. Count rows.
+7. Count missing values.
+8. Detect duplicate project codes.
+9. Detect numeric columns.
+10. Detect date columns.
+11. Generate profiling report.
+
+Output:
+
+data/processed/profile.json
+
+and:
+
+docs/data-dictionary.md
+
+============================================================
+9. PHASE 3 — DATA NORMALIZATION
+============================================================
+
+Normalize:
+
+project_code
+project_name
+sector
+ministry
+department
+implementing_agency
+state
+original_cost
+revised_cost
+expenditure
+physical_progress
+original_completion_date
+revised_completion_date
+sanction_date
+snapshot_date
+
+Do NOT destroy the original values.
+
+Store:
+
+raw_value
+normalized_value
+
+where necessary.
+
+============================================================
+10. PHASE 4 — DATA QUALITY ENGINE
+============================================================
+
+Implement validation rules.
+
+Examples:
+
+original_cost > 0
+
+revised_cost >= 0
+
+expenditure >= 0
+
+physical_progress between 0 and 100
+
+completion dates valid
+
+sanction date <= completion date where appropriate
+
+project code unique per snapshot
+
+Do not assume missing revised cost = zero.
+
+Do not assume missing revised date = no delay.
+
+Represent missingness explicitly.
+
+Generate:
+
+data_quality_report.json
+
+Include:
+
+- null rates
+- duplicate rates
+- invalid dates
+- invalid numbers
+- impossible values
+- inconsistent records
+
+============================================================
+11. PHASE 5 — DATABASE SCHEMA
+============================================================
+
+Create tables:
+
+projects
+
+project_snapshots
+
+ministries
+
+departments
+
+implementing_agencies
+
+sectors
+
+states
+
+project_events
+
+model_predictions
+
+risk_scores
+
+early_warnings
+
+model_runs
+
+feature_importance
+
+agent_runs
+
+audit_logs
+
+data_sources
+
+data_quality_reports
+
+intervention_recommendations
+
+============================================================
+12. PHASE 6 — HISTORICAL SNAPSHOT MODEL
+============================================================
+
+This is critical.
+
+A project should have:
+
+project_id
+
+project_code
+
+snapshot_date
+
+snapshot_version
+
+and snapshot-level attributes.
+
+Example:
+
+project 701324
+
+2024-01 snapshot
+2024-02 snapshot
+2024-03 snapshot
+...
+
+This allows temporal ML.
+
+============================================================
+13. PHASE 7 — PROJECT IDENTITY RESOLUTION
+============================================================
+
+Match the same project across monthly snapshots using:
+
+PRIMARY:
+project_code
+
+SECONDARY:
+normalized project name + ministry/agency
+
+Never use project name alone.
+
+Create a project identity resolution report.
+
+Flag uncertain matches.
+
+============================================================
+14. PHASE 8 — HISTORICAL DATA ASSEMBLY
+============================================================
+
+If multiple monthly CSVs are supplied:
+
+combine them into:
+
+project_history.parquet
+
+If only one CSV exists:
+
+DO NOT pretend it is longitudinal.
+
+Instead:
+
+1. Use it for descriptive analytics.
+2. Use it for prototype cross-sectional modelling only where mathematically defensible.
+3. Clearly label the ML limitations.
+4. Build ingestion architecture ready for historical snapshots.
+
+Use official PAIMANA monthly reports where accessible to expand historical coverage.
+
+============================================================
+15. PHASE 9 — TARGET DEFINITIONS
+============================================================
+
+Define targets carefully.
+
+TARGET A:
+Cost overrun
+
+Cost overrun ratio:
+
+(revised_cost - original_cost) / original_cost
+
+But only calculate a final outcome label when sufficient final/revised information exists.
+
+Binary:
+
+cost_overrun_flag =
+1 if final/revised cost > original cost
+0 if final/revised cost <= original cost
+
+Do NOT treat missing revised cost as zero.
+
+TARGET B:
+Cost overrun magnitude
+
+final_cost_overrun_percentage
+
+TARGET C:
+Time overrun
+
+For completed projects:
+
+actual_completion_date
+minus
+original/target completion date
+
+Create:
+
+time_overrun_days
+
+time_overrun_months
+
+time_overrun_flag
+
+For projects where actual completion is unavailable:
+
+do not fabricate the target.
+
+TARGET D:
+Schedule slippage
+
+Where revised completion date is known:
+
+revised_date - original_date
+
+But clearly label this as:
+
+"observed schedule revision"
+
+not necessarily actual completion delay.
+
+============================================================
+16. PHASE 10 — FEATURE ENGINEERING
+============================================================
+
+Create features based ONLY on information available at prediction time.
+
+Core features:
+
+original_cost
+
+project_age_months
+
+planned_duration_months
+
+elapsed_duration_months
+
+physical_progress
+
+expenditure
+
+expenditure_ratio
+
+progress_minus_expenditure_gap
+
+progress_per_month
+
+spend_per_progress_percent
+
+remaining_cost_estimate
+
+remaining_schedule_months
+
+cost_intensity
+
+sector
+
+ministry
+
+implementing_agency
+
+state
+
+mega_project_flag
+
+major_project_flag
+
+new_project_flag
+
+revised_date_already_present
+
+revision_count if historically available
+
+historical_sector_overrun_rate
+
+historical_agency_overrun_rate
+
+historical_ministry_overrun_rate
+
+historical_state_overrun_rate
+
+============================================================
+17. PHASE 11 — EARNED-VALUE-STYLE FEATURES
+============================================================
+
+Where the available data supports it:
+
+planned progress proxy
+
+actual physical progress
+
+financial progress proxy
+
+schedule performance proxy
+
+cost performance proxy
+
+Do NOT call these official EVM measures unless the required baseline fields exist.
+
+Call them:
+
+"PAIMANA-derived performance indicators"
+
+unless actual EVM fields are available.
+
+============================================================
+18. PHASE 12 — MISSING VARIABLE ANALYSIS
+============================================================
+
+This directly addresses PS requirements.
+
+Identify potentially predictive variables not available in the public dataset.
+
+Examples:
+
+land acquisition status
+
+number of unresolved land parcels
+
+forest/environment clearance status
+
+contractor performance
+
+contract variation count
+
+litigation count
+
+utility shifting status
+
+number of pending approvals
+
+material price inflation
+
+labour availability
+
+weather disruption
+
+fund release delay
+
+inter-ministerial dependency
+
+procurement delay
+
+geotechnical complexity
+
+local law-and-order disruption
+
+rehabilitation/resettlement progress
+
+Do NOT fabricate these.
+
+Instead create:
+
+"Recommended Additional CUF Variables"
+
+with:
+
+variable
+reason
+expected predictive value
+collection method
+data type
+priority
+
+============================================================
+19. PHASE 13 — BASELINE STATISTICS
+============================================================
+
+Before ML:
+
+Build conventional statistical baselines.
+
+Use:
+
+- logistic regression
+- linear regression
+- regularized regression
+- survival analysis where appropriate
+- simple historical averages
+
+The system MUST compare ML against statistical baselines.
+
+This directly addresses the SIH question:
+
+Does AI/ML actually provide significant gains?
+
+============================================================
+20. PHASE 14 — COST OVERRUN MODEL
+============================================================
+
+Build:
+
+Model A:
+Logistic Regression baseline
+
+Model B:
+Random Forest
+
+Model C:
+XGBoost
+
+Optional:
+LightGBM
+
+Tasks:
+
+1. Probability of cost overrun
+2. Expected overrun magnitude
+
+Output:
+
+probability
+predicted magnitude
+confidence/calibration
+risk band
+
+============================================================
+21. PHASE 15 — TIME OVERRUN MODEL
+============================================================
+
+Build:
+
+baseline regression/statistical model
+
+and:
+
+XGBoost/Random Forest model
+
+Predict:
+
+delay probability
+
+delay duration
+
+where labels permit.
+
+Do not predict actual completion dates unless the data supports it.
+
+============================================================
+22. PHASE 16 — MODEL SPLITTING
+============================================================
+
+NEVER use random train/test split as the only evaluation.
+
+Use chronological splitting.
+
+Example:
+
+Train:
+2010–2022
+
+Validation:
+2023
+
+Test:
+2024–2025
+
+Adapt to actual available data.
+
+If only 2026 data exists:
+
+state clearly that true temporal validation is unavailable.
+
+============================================================
+23. PHASE 17 — MODEL METRICS
+============================================================
+
+For classification:
+
+Precision
+Recall
+F1
+ROC-AUC
+PR-AUC
+Calibration
+Confusion Matrix
+
+For regression:
+
+MAE
+RMSE
+R²
+MAPE where mathematically appropriate
+
+For early warning:
+
+Precision@K
+Recall@K
+Top-K capture rate
+
+Example:
+
+"What percentage of eventual high-overrun projects were present in the top 10% risk list?"
+
+============================================================
+24. PHASE 18 — CLASS IMBALANCE
+============================================================
+
+Never optimize for raw accuracy.
+
+Use:
+
+class weights
+
+threshold tuning
+
+PR-AUC
+
+F1
+
+recall at operational threshold
+
+calibration
+
+Do not randomly oversample across time in a way that causes leakage.
+
+============================================================
+25. PHASE 19 — MODEL CALIBRATION
+============================================================
+
+Risk probability must be calibrated.
+
+Use:
+
+Platt scaling or isotonic regression
+
+where supported.
+
+Display:
+
+Predicted probability
+
+NOT:
+
+"Guaranteed 83% chance"
+
+Use language:
+
+"Model-estimated risk: 83%"
+
+============================================================
+26. PHASE 20 — SHAP EXPLAINABILITY
+============================================================
+
+Use SHAP for tree models.
+
+For every prediction show:
+
+Top risk drivers
+
+Top protective factors
+
+Feature contribution
+
+Direction:
+
+increases risk
+reduces risk
+
+Example:
+
+HIGH RISK
+
++ high expenditure relative to physical progress
++ repeated schedule revision
++ long project age
++ sector historical overrun rate
+
+Do not generate explanations that contradict SHAP.
+
+============================================================
+27. PHASE 21 — RISK ENGINE
+============================================================
+
+Create deterministic risk aggregation.
+
+Inputs:
+
+cost_overrun_probability
+time_overrun_probability
+progress gap
+schedule slippage
+financial intensity
+data freshness
+model confidence
+
+Risk:
+
+LOW
+MEDIUM
+HIGH
+CRITICAL
+
+Risk score:
+
+0–100
+
+Do not make the score arbitrary.
+
+Document weights.
+
+Allow weights to be configured.
+
+============================================================
+28. PHASE 22 — RISK SCORE EXPLANATION
+============================================================
+
+Every score must explain:
+
+Overall score:
+82/100
+
+Risk:
+CRITICAL
+
+Contributors:
+
+Cost overrun risk: 31/35
+Schedule risk: 27/30
+Progress/financial mismatch: 15/20
+Historical sector risk: 6/10
+Data confidence: 3/5
+
+Then list top evidence.
+
+============================================================
+29. PHASE 23 — EARLY WARNING ENGINE
+============================================================
+
+Generate alerts for:
+
+high predicted cost overrun
+
+high predicted time overrun
+
+rapid expenditure with low physical progress
+
+schedule revision
+
+large cost revision
+
+stagnant physical progress
+
+abnormal project trajectory
+
+risk deterioration
+
+missing critical data
+
+model confidence degradation
+
+============================================================
+30. PHASE 24 — EARLY WARNING SEVERITY
+============================================================
+
+Severity:
+
+INFO
+WATCH
+HIGH
+CRITICAL
+
+Every warning must contain:
+
+project
+timestamp
+reason
+evidence
+risk score
+recommended review action
+source
+
+============================================================
+31. PHASE 25 — BENCHMARKING
+============================================================
+
+Allow comparison by:
+
+sector
+
+ministry
+
+agency
+
+state
+
+project size
+
+project age
+
+project stage
+
+Compare:
+
+cost overrun rate
+
+median overrun
+
+schedule revision rate
+
+physical progress
+
+expenditure ratio
+
+risk distribution
+
+============================================================
+32. PHASE 26 — PEER BENCHMARKING
+============================================================
+
+For a selected project:
+
+find comparable projects.
+
+Similarity dimensions:
+
+sector
+original cost band
+project age
+ministry
+agency
+state
+progress stage
+
+Show:
+
+selected project
+
+peer median
+
+peer quartiles
+
+selected project's percentile
+
+============================================================
+33. PHASE 27 — PROJECT DETAIL PAGE
+============================================================
+
+Create a serious project page.
+
+Header:
+
+Project Name
+Project Code
+Sector
+Ministry
+Agency
+State
+
+KPIs:
+
+Original Cost
+Revised Cost
+Expenditure
+Physical Progress
+Cost Overrun
+Schedule Revision
+Risk Score
+
+Sections:
+
+Overview
+
+Financial Performance
+
+Schedule
+
+Physical Progress
+
+Risk
+
+SHAP Explanation
+
+Early Warnings
+
+Peer Benchmark
+
+Historical Timeline
+
+AI Analysis
+
+Recommended Actions
+
+============================================================
+34. PHASE 28 — PORTFOLIO DASHBOARD
+============================================================
+
+Build the primary dashboard.
+
+Top KPIs:
+
+Total Projects
+
+Total Original Cost
+
+Total Revised Cost
+
+Total Expenditure
+
+Cost Escalation
+
+High/Critical Risk Projects
+
+Projects With Schedule Risk
+
+Projects Requiring Attention
+
+Charts:
+
+sector distribution
+
+risk distribution
+
+physical progress distribution
+
+cost overview
+
+state distribution
+
+ministry distribution
+
+trend over time
+
+============================================================
+35. PHASE 29 — REPLICATE PAIMANA FILTER EXPERIENCE
+============================================================
+
+Implement:
+
+Sector filter
+
+Ministry/Department filter
+
+State/UT filter
+
+Project Cost range
+
+Month & Year
+
+Risk level
+
+Project status
+
+Physical progress
+
+Cost overrun
+
+Schedule risk
+
+Filters must update:
+
+KPIs
+
+charts
+
+project table
+
+risk rankings
+
+alerts
+
+Do not create fake values.
+
+============================================================
+36. PHASE 30 — PROJECT TABLE
+============================================================
+
+Columns:
+
+Project Code
+
+Project Name
+
+Sector
+
+Ministry
+
+Agency
+
+State
+
+Original Cost
+
+Revised Cost
+
+Expenditure
+
+Physical Progress
+
+Original Date
+
+Revised Date
+
+Risk Score
+
+Cost Risk
+
+Time Risk
+
+Warning Count
+
+Last Snapshot
+
+Sortable.
+
+Filterable.
+
+Searchable.
+
+Paginated.
+
+Exportable.
+
+============================================================
+37. PHASE 31 — RISK HEATMAP
+============================================================
+
+Build a portfolio heatmap:
+
+X:
+Cost Risk
+
+Y:
+Time Risk
+
+Bubble size:
+Original Cost
+
+Bubble color:
+Risk band
+
+Click:
+Open project detail
+
+Do not use colors arbitrarily.
+
+Use accessible color semantics.
+
+============================================================
+38. PHASE 32 — COST VS PROGRESS ANALYSIS
+============================================================
+
+Create scatter plot:
+
+X:
+Physical Progress
+
+Y:
+Expenditure %
+
+Identify:
+
+normal projects
+
+overspending projects
+
+under-spending projects
+
+progress stagnation
+
+Use model/anomaly logic.
+
+Do not call every outlier fraud.
+
+Use:
+
+"Requires review"
+
+============================================================
+39. PHASE 33 — PROJECT TRAJECTORY
+============================================================
+
+For historical projects:
+
+plot over time:
+
+physical progress
+
+expenditure
+
+risk
+
+revised cost
+
+schedule
+
+This is one of the most important views.
+
+============================================================
+40. PHASE 34 — RISK TREND
+============================================================
+
+Show:
+
+risk today
+
+risk previous month
+
+risk change
+
+risk trajectory
+
+Examples:
+
+IMPROVING
+
+STABLE
+
+DETERIORATING
+
+NEW HIGH RISK
+
+============================================================
+41. PHASE 35 — ADMIN INTERVENTION QUEUE
+============================================================
+
+Create:
+
+"Projects Requiring Attention"
+
+Rank by:
+
+risk
+
+financial exposure
+
+delay exposure
+
+confidence
+
+risk deterioration
+
+Each item:
+
+Project
+
+Risk
+
+Why
+
+Evidence
+
+Recommended review
+
+============================================================
+42. PHASE 36 — INTERVENTION RECOMMENDATIONS
+============================================================
+
+Recommendations must be evidence-based.
+
+Examples:
+
+"Review schedule slippage and revised completion commitments."
+
+"Review expenditure relative to reported physical progress."
+
+"Review unresolved implementation dependencies."
+
+"Request updated progress information."
+
+Do NOT invent a specific government action unless supported by actual rules/data.
+
+============================================================
+43. PHASE 37 — LLM PROJECT INTELLIGENCE ASSISTANT
+============================================================
+
+Build a constrained LLM assistant.
+
+It can answer:
+
+"What is the risk of Project 705728?"
+
+"Why is this project high risk?"
+
+"Which sectors have the highest cost escalation?"
+
+"Show high-risk projects above ₹1,000 crore."
+
+"Compare this project to peers."
+
+"What changed from the previous month?"
+
+"What variables are missing from the current CUF?"
+
+============================================================
+44. PHASE 38 — LLM GROUNDING
+============================================================
+
+The assistant MUST retrieve structured database facts before answering.
+
+Architecture:
+
+User question
+
+↓
+
+Intent detection
+
+↓
+
+Structured query planner
+
+↓
+
+Database retrieval
+
+↓
+
+ML prediction retrieval
+
+↓
+
+SHAP retrieval
+
+↓
+
+Evidence bundle
+
+↓
+
+LLM
+
+↓
+
+Citation/evidence validation
+
+↓
+
+Answer
+
+The LLM must NOT directly invent SQL.
+
+Use predefined safe query tools.
+
+============================================================
+45. PHASE 39 — LLM SAFETY
+============================================================
+
+The assistant must never:
+
+invent project statistics
+
+invent government policy
+
+invent risk scores
+
+invent project data
+
+invent missing fields
+
+claim a prediction is certain
+
+claim fraud
+
+claim corruption
+
+issue legal orders
+
+issue financial orders
+
+If data is unavailable:
+
+"I don't have sufficient PAIMANA data to answer that."
+
+============================================================
+46. PHASE 40 — AGENT ARCHITECTURE
+============================================================
+
+Create multiple specialized agents.
+
+Agent 1:
+Data Quality Agent
+
+Agent 2:
+Project Risk Analyst Agent
+
+Agent 3:
+Portfolio Intelligence Agent
+
+Agent 4:
+Intervention Advisor Agent
+
+Agent 5:
+Project Intelligence Assistant
+
+============================================================
+47. PHASE 41 — DATA QUALITY AGENT
+============================================================
+
+Input:
+
+project snapshot
+
+Output:
+
+data quality assessment
+
+missing fields
+
+inconsistent fields
+
+freshness
+
+confidence
+
+warnings
+
+This agent does NOT modify source data.
+
+============================================================
+48. PHASE 42 — PROJECT RISK AGENT
+============================================================
+
+Input:
+
+project data
+
+ML outputs
+
+SHAP explanations
+
+historical trajectory
+
+Output:
+
+structured risk interpretation.
+
+Must cite actual features.
+
+============================================================
+49. PHASE 43 — PORTFOLIO INTELLIGENCE AGENT
+============================================================
+
+Input:
+
+portfolio aggregates
+
+risk rankings
+
+sector benchmarks
+
+Output:
+
+portfolio-level insights.
+
+Example:
+
+"Roads & Highways account for X% of monitored original cost."
+
+Only say X when computed from database.
+
+============================================================
+50. PHASE 44 — INTERVENTION ADVISOR AGENT
+============================================================
+
+Input:
+
+risk factors
+
+project status
+
+data quality
+
+Output:
+
+possible review actions.
+
+Never autonomous.
+
+============================================================
+51. PHASE 45 — AGENT ORCHESTRATOR
+============================================================
+
+Build:
+
+AgentOrchestrator
+
+It should:
+
+1. classify request
+2. select agents
+3. retrieve evidence
+4. execute deterministic computations
+5. call agents
+6. validate outputs
+7. combine results
+8. produce final response
+
+Do NOT simply call all agents sequentially for every question.
+
+Use task-specific workflows.
+
+============================================================
+52. PHASE 46 — WORKFLOW: PROJECT ANALYSIS
+============================================================
+
+Workflow:
+
+Project selected
+
+↓
+
+retrieve latest snapshot
+
+↓
+
+retrieve historical snapshots
+
+↓
+
+retrieve model predictions
+
+↓
+
+retrieve SHAP
+
+↓
+
+retrieve benchmark
+
+↓
+
+Data Quality Agent
+
+↓
+
+Risk Analyst
+
+↓
+
+Intervention Advisor
+
+↓
+
+final structured analysis
+
+============================================================
+53. PHASE 47 — WORKFLOW: PORTFOLIO REVIEW
+============================================================
+
+Workflow:
+
+portfolio filter
+
+↓
+
+calculate metrics
+
+↓
+
+rank risk
+
+↓
+
+benchmark
+
+↓
+
+detect anomalies
+
+↓
+
+Portfolio Intelligence Agent
+
+↓
+
+generate briefing
+
+============================================================
+54. PHASE 48 — WORKFLOW: EARLY WARNING
+============================================================
+
+Workflow:
+
+new snapshot
+
+↓
+
+data quality
+
+↓
+
+feature engineering
+
+↓
+
+model inference
+
+↓
+
+risk scoring
+
+↓
+
+change detection
+
+↓
+
+warning generation
+
+↓
+
+store alerts
+
+↓
+
+optional AI explanation
+
+============================================================
+55. PHASE 49 — WORKFLOW: MONTHLY UPDATE
+============================================================
+
+When a new PAIMANA dataset arrives:
+
+1. ingest
+2. validate
+3. identify snapshot date
+4. match projects
+5. detect new projects
+6. detect completed projects
+7. calculate changes
+8. calculate features
+9. generate predictions
+10. update risk
+11. generate warnings
+12. update dashboard
+
+============================================================
+56. PHASE 50 — CHANGE DETECTION
+============================================================
+
+For every project:
+
+Compare previous snapshot.
+
+Detect:
+
+cost change
+
+expenditure change
+
+physical progress change
+
+schedule change
+
+risk change
+
+status change
+
+new warning
+
+resolved warning
+
+============================================================
+57. PHASE 51 — MODEL VERSIONING
+============================================================
+
+Every prediction must store:
+
+model_name
+
+model_version
+
+training_date
+
+feature_version
+
+dataset_version
+
+prediction_timestamp
+
+probability
+
+risk score
+
+explanation version
+
+============================================================
+58. PHASE 52 — DATASET VERSIONING
+============================================================
+
+Every imported dataset:
+
+dataset_id
+
+source
+
+download_date
+
+reporting_period
+
+checksum
+
+row_count
+
+schema_hash
+
+quality_score
+
+============================================================
+59. PHASE 53 — MODEL REGISTRY
+============================================================
+
+Store:
+
+model
+
+version
+
+training dataset
+
+features
+
+metrics
+
+hyperparameters
+
+training period
+
+validation period
+
+test period
+
+status
+
+production flag
+
+============================================================
+60. PHASE 54 — MODEL COMPARISON PAGE
+============================================================
+
+Create:
+
+Statistical Baseline vs ML
+
+Columns:
+
+Model
+
+Precision
+
+Recall
+
+F1
+
+ROC-AUC
+
+PR-AUC
+
+MAE
+
+RMSE
+
+Calibration
+
+Top-K Recall
+
+Training data
+
+Features
+
+Show which model wins.
+
+Do not assume XGBoost wins.
+
+============================================================
+61. PHASE 55 — FEATURE IMPORTANCE
+============================================================
+
+Show global feature importance.
+
+Also:
+
+sector-specific importance
+
+model-specific importance
+
+local project-specific SHAP
+
+============================================================
+62. PHASE 56 — CUF GAP ANALYSIS
+============================================================
+
+Create a dedicated page:
+
+"Data Needed to Improve Prediction"
+
+Columns:
+
+Missing Variable
+
+Why it matters
+
+Expected effect
+
+Collection difficulty
+
+Priority
+
+Potential data source
+
+Example:
+
+Land acquisition completion %
+
+Pending statutory approvals
+
+Contract variation count
+
+Litigation status
+
+Utility shifting status
+
+Contractor delay history
+
+Funding release delay
+
+Weather disruption
+
+============================================================
+63. PHASE 57 — MODEL ABLATION STUDY
+============================================================
+
+Run:
+
+Model using only current CUF/public fields
+
+versus
+
+Model using additional derived features
+
+versus
+
+Model using historical contextual features
+
+Compare performance.
+
+This directly answers:
+
+How much predictive power comes from existing CUF fields?
+
+============================================================
+64. PHASE 58 — FAIRNESS / BIAS ANALYSIS
+============================================================
+
+Check performance by:
+
+sector
+
+state
+
+ministry
+
+project size
+
+agency
+
+Do not make protected-class claims unless relevant data exists.
+
+Report:
+
+precision
+
+recall
+
+false negative rate
+
+calibration
+
+============================================================
+65. PHASE 59 — DATA FRESHNESS
+============================================================
+
+Every dashboard view should show:
+
+Last data update
+
+Snapshot month
+
+Data source
+
+Prediction model date
+
+Never call data "real-time" unless it actually is.
+
+Use:
+
+"Latest available PAIMANA data"
+
+============================================================
+66. PHASE 60 — ADMIN DATA IMPORT
+============================================================
+
+Build admin interface:
+
+Upload CSV
+
+Preview
+
+Schema validation
+
+Data quality report
+
+Confirm import
+
+Import progress
+
+Import result
+
+Rollback
+
+Dataset version
+
+============================================================
+67. PHASE 61 — CSV EXPORT
+============================================================
+
+Allow export of:
+
+filtered projects
+
+risk rankings
+
+alerts
+
+model predictions
+
+benchmark reports
+
+============================================================
+68. PHASE 62 — REPORT GENERATION
+============================================================
+
+Generate PDF briefing:
+
+Executive Summary
+
+Portfolio Statistics
+
+Critical Projects
+
+Cost Risk
+
+Time Risk
+
+Top Drivers
+
+Early Warnings
+
+Recommended Review Actions
+
+Data Quality
+
+Model Information
+
+============================================================
+69. PHASE 63 — EXECUTIVE DASHBOARD
+============================================================
+
+Create a simple executive dashboard.
+
+Do NOT overload it with ML jargon.
+
+Show:
+
+Portfolio Health
+
+Critical Projects
+
+Potential Cost Exposure
+
+Potential Schedule Risk
+
+New Warnings
+
+Deteriorating Projects
+
+Top Sectors Requiring Review
+
+============================================================
+70. PHASE 64 — ANALYST DASHBOARD
+============================================================
+
+Detailed view:
+
+model metrics
+
+features
+
+SHAP
+
+benchmarks
+
+historical trajectories
+
+data quality
+
+model comparisons
+
+============================================================
+71. PHASE 65 — PROJECT OFFICER VIEW
+============================================================
+
+Focus on:
+
+assigned/relevant projects
+
+warnings
+
+what changed
+
+why risk changed
+
+what data is missing
+
+review actions
+
+============================================================
+72. PHASE 66 — ROLE-BASED ACCESS
+============================================================
+
+Roles:
+
+ADMIN
+
+DECISION_MAKER
+
+ANALYST
+
+PROJECT_OFFICER
+
+VIEWER
+
+Implement RBAC.
+
+============================================================
+73. PHASE 67 — SECURITY
+============================================================
+
+Implement:
+
+JWT/session authentication
+
+RBAC
+
+secure cookies where appropriate
+
+CORS
+
+rate limiting
+
+request validation
+
+SQL injection protection
+
+parameterized queries
+
+audit logs
+
+secure environment variables
+
+no secrets in frontend
+
+============================================================
+74. PHASE 68 — AUDIT TRAIL
+============================================================
+
+Record:
+
+login
+
+data upload
+
+dataset import
+
+model deployment
+
+prediction generation
+
+risk override if allowed
+
+report generation
+
+admin changes
+
+configuration changes
+
+============================================================
+75. PHASE 69 — MANUAL REVIEW OVERRIDE
+============================================================
+
+If an administrator manually changes a risk classification:
+
+NEVER overwrite the model result.
+
+Store:
+
+model risk
+
+manual review
+
+reviewer
+
+reason
+
+timestamp
+
+The UI must show both.
+
+============================================================
+76. PHASE 70 — API DESIGN
+============================================================
+
+Create:
+
+GET /api/health
+
+GET /api/projects
+
+GET /api/projects/{project_code}
+
+GET /api/projects/{project_code}/history
+
+GET /api/projects/{project_code}/risk
+
+GET /api/projects/{project_code}/explanation
+
+GET /api/portfolio/summary
+
+GET /api/portfolio/risks
+
+GET /api/portfolio/benchmarks
+
+GET /api/alerts
+
+GET /api/models
+
+GET /api/models/{model_id}
+
+POST /api/admin/datasets/import
+
+GET /api/admin/datasets
+
+POST /api/admin/models/train
+
+POST /api/admin/models/promote
+
+POST /api/admin/predictions/run
+
+POST /api/assistant/query
+
+============================================================
+77. PHASE 71 — API VALIDATION
+============================================================
+
+Use Pydantic schemas.
+
+Never trust frontend input.
+
+Validate:
+
+pagination
+
+filters
+
+dates
+
+project codes
+
+numeric ranges
+
+risk values
+
+sort fields
+
+============================================================
+78. PHASE 72 — PERFORMANCE
+============================================================
+
+Use:
+
+database indexes
+
+pagination
+
+materialized aggregates where appropriate
+
+caching
+
+precomputed risk scores
+
+precomputed portfolio metrics
+
+Do not run expensive model inference on every page load.
+
+============================================================
+79. PHASE 73 — BACKGROUND JOBS
+============================================================
+
+Create workers for:
+
+dataset processing
+
+feature generation
+
+model inference
+
+risk calculation
+
+alert generation
+
+report generation
+
+============================================================
+80. PHASE 74 — CACHING
+============================================================
+
+Cache:
+
+portfolio summary
+
+sector metrics
+
+risk rankings
+
+project details where appropriate
+
+Invalidate cache after new dataset import.
+
+============================================================
+81. PHASE 75 — FRONTEND DESIGN SYSTEM
+============================================================
+
+Design language:
+
+Government-grade
+
+Professional
+
+Clean
+
+Data-centric
+
+Trustworthy
+
+Avoid:
+
+gaming UI
+
+neon colors
+
+unnecessary gradients
+
+fake futuristic effects
+
+huge animations
+
+The interface should look suitable for a Ministry/Department monitoring platform.
+
+============================================================
+82. PHASE 76 — LANDING / LOGIN
+============================================================
+
+Create:
+
+PAIMANA AI
+
+Infrastructure Project Intelligence & Early Warning System
+
+Short explanation:
+
+"Transforming project monitoring from descriptive reporting into predictive decision support."
+
+Login.
+
+============================================================
+83. PHASE 77 — MAIN NAVIGATION
+============================================================
+
+Navigation:
+
+Dashboard
+
+Projects
+
+Risk Monitor
+
+Early Warnings
+
+Analytics
+
+Benchmarks
+
+Models
+
+Data
+
+AI Assistant
+
+Reports
+
+Admin
+
+============================================================
+84. PHASE 78 — PROJECT SEARCH
+============================================================
+
+Global search:
+
+Project Code
+
+Project Name
+
+Agency
+
+Ministry
+
+Sector
+
+Show instant results.
+
+============================================================
+85. PHASE 79 — RISK MONITOR PAGE
+============================================================
+
+Show ranked projects.
+
+Columns:
+
+Rank
+
+Project
+
+Risk
+
+Cost Risk
+
+Time Risk
+
+Score
+
+Original Cost
+
+Physical Progress
+
+Change
+
+Warnings
+
+============================================================
+86. PHASE 80 — EARLY WARNING PAGE
+============================================================
+
+Cards:
+
+Critical
+
+High
+
+Watch
+
+Resolved
+
+Filters:
+
+sector
+
+ministry
+
+state
+
+date
+
+warning type
+
+severity
+
+============================================================
+87. PHASE 81 — ANALYTICS PAGE
+============================================================
+
+Charts:
+
+cost escalation
+
+schedule revisions
+
+physical progress
+
+expenditure
+
+sector comparison
+
+state comparison
+
+ministry comparison
+
+project-size comparison
+
+============================================================
+88. PHASE 82 — BENCHMARK PAGE
+============================================================
+
+Allow:
+
+Project vs peers
+
+Sector vs sector
+
+Agency vs agency
+
+Ministry vs ministry
+
+State vs state
+
+============================================================
+89. PHASE 83 — MODEL PAGE
+============================================================
+
+Show:
+
+Current production model
+
+Model metrics
+
+Last training
+
+Dataset version
+
+Feature version
+
+Model comparison
+
+Feature importance
+
+Calibration
+
+============================================================
+90. PHASE 84 — DATA PAGE
+============================================================
+
+Show:
+
+Datasets
+
+Rows
+
+Date range
+
+Source
+
+Schema
+
+Missingness
+
+Quality score
+
+Import history
+
+============================================================
+91. PHASE 85 — AI ASSISTANT UI
+============================================================
+
+Chat interface.
+
+Include suggested questions:
+
+"Which projects require immediate review?"
+
+"Why is Project X high risk?"
+
+"Which sectors have the highest cost escalation?"
+
+"What changed this month?"
+
+"Compare Project X with similar projects."
+
+"Which missing variables would improve prediction?"
+
+Answers must include evidence.
+
+============================================================
+92. PHASE 86 — AI RESPONSE FORMAT
+============================================================
+
+For analytical answers use:
+
+Answer
+
+Evidence
+
+Key Metrics
+
+Drivers
+
+Risk
+
+Recommended Review
+
+Data Source
+
+Model Version
+
+============================================================
+93. PHASE 87 — RESPONSIVE DESIGN
+============================================================
+
+Desktop first.
+
+Tablet support.
+
+Mobile support for executive summary and alerts.
+
+============================================================
+94. PHASE 88 — ACCESSIBILITY
+============================================================
+
+Implement:
+
+keyboard navigation
+
+ARIA labels
+
+contrast
+
+screen reader-friendly tables
+
+focus states
+
+semantic HTML
+
+============================================================
+95. PHASE 89 — ERROR STATES
+============================================================
+
+Create proper states:
+
+Loading
+
+No data
+
+Data unavailable
+
+Model unavailable
+
+Prediction unavailable
+
+AI unavailable
+
+Stale data
+
+Import failed
+
+Permission denied
+
+Server unavailable
+
+============================================================
+96. PHASE 90 — EMPTY DATA BEHAVIOR
+============================================================
+
+Never show:
+
+₹0
+
+0 projects
+
+0 risk
+
+unless the actual filtered result is zero.
+
+Do not confuse:
+
+"data unavailable"
+
+with:
+
+"zero"
+
+============================================================
+97. PHASE 91 — DEMO DATA
+============================================================
+
+If demo mode is needed:
+
+Use only clearly marked synthetic/demo data.
+
+Never mix synthetic data with official PAIMANA data.
+
+Add:
+
+DEMO MODE
+
+banner.
+
+============================================================
+98. PHASE 92 — TESTING
+============================================================
+
+Unit tests:
+
+data parsing
+
+date parsing
+
+target generation
+
+feature engineering
+
+risk scoring
+
+SHAP mapping
+
+alert generation
+
+API validation
+
+agent validation
+
+============================================================
+99. PHASE 93 — DATA LEAKAGE TESTS
+============================================================
+
+Write automated tests that detect whether future fields enter historical features.
+
+For each feature:
+
+record its availability timestamp.
+
+Fail training if:
+
+feature_date > prediction_date.
+
+============================================================
+100. PHASE 94 — MODEL REPRODUCIBILITY
+============================================================
+
+Every training run must record:
+
+random seed
+
+dataset version
+
+feature version
+
+model parameters
+
+environment
+
+metrics
+
+timestamp
+
+============================================================
+101. PHASE 95 — FRONTEND E2E TESTING
+============================================================
+
+Test:
+
+login
+
+dashboard
+
+filters
+
+project search
+
+project details
+
+risk page
+
+warning page
+
+AI assistant
+
+CSV upload
+
+report generation
+
+============================================================
+102. PHASE 96 — SECURITY TESTING
+============================================================
+
+Test:
+
+unauthorized API
+
+role escalation
+
+invalid project code
+
+SQL injection
+
+malicious CSV
+
+oversized CSV
+
+prompt injection
+
+LLM hallucination
+
+secret exposure
+
+============================================================
+103. PHASE 97 — OBSERVABILITY
+============================================================
+
+Add structured logging.
+
+Track:
+
+API latency
+
+ML inference latency
+
+model errors
+
+dataset import errors
+
+LLM latency
+
+LLM failures
+
+warning generation
+
+database errors
+
+============================================================
+104. PHASE 98 — HEALTH CHECK
+============================================================
+
+GET /api/health
+
+Return:
+
+database
+
+model service
+
+dataset status
+
+latest snapshot
+
+latest model
+
+AI provider
+
+worker status
+
+============================================================
+105. PHASE 99 — DOCKER
+============================================================
+
+Create:
+
+Dockerfile frontend
+
+Dockerfile backend
+
+Dockerfile ML if needed
+
+docker-compose.yml
+
+Services:
+
+frontend
+
+backend
+
+database if local
+
+worker
+
+============================================================
+106. PHASE 100 — DOCUMENTATION
+============================================================
+
+Create:
+
+README.md
+
+docs/architecture.md
+
+docs/data-dictionary.md
+
+docs/ml-methodology.md
+
+docs/model-evaluation.md
+
+docs/data-leakage.md
+
+docs/agent-architecture.md
+
+docs/api.md
+
+docs/deployment.md
+
+docs/cuf-gap-analysis.md
+
+docs/demo-script.md
+
+============================================================
+107. PHASE 101 — MODEL CARD
+============================================================
+
+Create a model card for each production model.
+
+Include:
+
+purpose
+
+training data
+
+features
+
+target
+
+limitations
+
+metrics
+
+bias analysis
+
+known failure cases
+
+data leakage controls
+
+intended use
+
+not intended use
+
+============================================================
+108. PHASE 102 — DATA CARD
+============================================================
+
+Create data card:
+
+source
+
+coverage
+
+date range
+
+fields
+
+missingness
+
+limitations
+
+update frequency
+
+known inconsistencies
+
+============================================================
+109. PHASE 103 — MODEL LIMITATION TRANSPARENCY
+============================================================
+
+If the dataset lacks:
+
+contractor performance
+
+land acquisition
+
+clearance
+
+litigation
+
+fund release
+
+weather
+
+etc.
+
+The system must explicitly say:
+
+"These factors are not currently represented in the available PAIMANA dataset and therefore are not directly modeled."
+
+============================================================
+110. PHASE 104 — HISTORICAL REPORT INGESTION
+============================================================
+
+Build optional ingestion for official PAIMANA monthly Flash Reports.
+
+Parse tables for:
+
+ongoing projects
+
+completed projects
+
+newly added projects
+
+Use project code to link history.
+
+Maintain:
+
+report_month
+
+source_document
+
+page_number where available
+
+============================================================
+111. PHASE 105 — COMPLETED PROJECT LABEL PIPELINE
+============================================================
+
+Use completed-project records to build reliable final outcome labels.
+
+For each completed project:
+
+original completion target
+
+revised target
+
+actual completion
+
+original cost
+
+revised cost
+
+final expenditure where available
+
+Calculate:
+
+time overrun
+
+schedule revision
+
+cost overrun
+
+expenditure/original cost
+
+expenditure/revised cost
+
+Store source evidence.
+
+============================================================
+112. PHASE 106 — EARLY WARNING BACKTEST
+============================================================
+
+This is a major demo feature.
+
+Take historical projects.
+
+Pretend we are at:
+
+T - 12 months
+
+T - 6 months
+
+T - 3 months
+
+Generate predictions using only data available then.
+
+Then compare with actual outcome.
+
+Display:
+
+Predicted Risk
+
+Actual Outcome
+
+Correct Early Warning?
+
+Months Before Outcome
+
+This should be one of the strongest demo features.
+
+============================================================
+113. PHASE 107 — TOP-K EARLY WARNING EVALUATION
+============================================================
+
+For example:
+
+Top 5%
+
+Top 10%
+
+Top 20%
+
+Measure:
+
+how many eventual cost-overrun projects were captured?
+
+how many delayed projects were captured?
+
+Show:
+
+"At the top 10% intervention capacity, the model captured X% of eventual overrun projects."
+
+Only if the data supports the calculation.
+
+============================================================
+114. PHASE 108 — COUNTERFACTUAL / WHAT-IF ANALYSIS
+============================================================
+
+Create a safe what-if tool.
+
+Example:
+
+"What if physical progress improves by 10 percentage points?"
+
+"What if expenditure growth slows?"
+
+"What if schedule slippage is reduced?"
+
+The model can estimate how the risk score changes.
+
+Do NOT claim that the scenario will actually happen.
+
+Label:
+
+"Model scenario simulation"
+
+============================================================
+115. PHASE 109 — RISK DECOMPOSITION
+============================================================
+
+Risk score must be decomposable.
+
+Example:
+
+Cost risk
+Schedule risk
+Progress risk
+Financial risk
+Historical context
+Data confidence
+
+Total:
+
+0–100
+
+============================================================
+116. PHASE 110 — PORTFOLIO PRIORITY SCORE
+============================================================
+
+Create:
+
+Priority Score
+
+that considers:
+
+risk
+
+financial exposure
+
+time exposure
+
+risk deterioration
+
+confidence
+
+This is NOT the same as risk.
+
+Document the distinction.
+
+============================================================
+117. PHASE 111 — PROJECT ALERT LIFECYCLE
+============================================================
+
+States:
+
+OPEN
+
+ACKNOWLEDGED
+
+UNDER_REVIEW
+
+RESOLVED
+
+REOPENED
+
+Store timestamps and actors.
+
+============================================================
+118. PHASE 112 — MONTHLY EXECUTIVE BRIEFING
+============================================================
+
+Automatically generate:
+
+Monthly Portfolio Brief
+
+Sections:
+
+Executive Summary
+
+Portfolio Change
+
+New High Risks
+
+Deteriorating Projects
+
+Cost Escalation
+
+Schedule Risks
+
+Sector Highlights
+
+Data Quality
+
+Model Performance
+
+Recommended Reviews
+
+============================================================
+119. PHASE 113 — AI BRIEFING VALIDATION
+============================================================
+
+LLM-generated briefing must be validated against database metrics.
+
+No number may appear in an AI report unless it exists in the evidence bundle.
+
+============================================================
+120. PHASE 114 — SOURCE CITATIONS
+============================================================
+
+Every major AI insight should show:
+
+Source:
+PAIMANA snapshot YYYY-MM
+
+or:
+
+Source:
+PAIMANA Flash Report Month Year
+
+For derived values:
+
+"Calculated from PAIMANA data"
+
+For ML:
+
+"Model-generated prediction"
+
+For AI:
+
+"LLM-generated interpretation based on retrieved evidence"
+
+============================================================
+121. PHASE 115 — FINAL DEMO FLOW
+============================================================
+
+The final hackathon demonstration should follow:
+
+1. Open executive dashboard.
+
+2. Show current portfolio.
+
+3. Filter:
+   Roads & Highways
+   or another real sector.
+
+4. Show portfolio metrics.
+
+5. Open Risk Monitor.
+
+6. Select a real project.
+
+7. Show:
+   cost
+   expenditure
+   physical progress
+   schedule
+   risk score
+
+8. Show historical trajectory.
+
+9. Show model prediction.
+
+10. Show SHAP explanation.
+
+11. Show why risk is high.
+
+12. Show early warning.
+
+13. Show comparable projects.
+
+14. Ask AI assistant:
+    "Why is this project high risk?"
+
+15. Ask:
+    "What changed from the previous snapshot?"
+
+16. Ask:
+    "What should the monitoring officer review?"
+
+17. Show evidence.
+
+18. Show model-vs-statistical baseline.
+
+19. Show CUF gap analysis.
+
+20. Show historical backtest:
+    predicted risk vs actual outcome.
+
+============================================================
+122. PHASE 116 — NO FAKE AI
+============================================================
+
+Do not build an AI chatbot that simply returns predefined text.
+
+AI must actually receive:
+
+retrieved project data
+
+model outputs
+
+SHAP drivers
+
+historical metrics
+
+benchmark data
+
+and produce grounded analysis.
+
+============================================================
+123. PHASE 117 — NO FAKE ML
+============================================================
+
+Do not generate random predictions.
+
+Do not hard-code:
+
+"risk = 87"
+
+Do not create fake probabilities.
+
+Every prediction must come from a trained model or explicitly labeled deterministic fallback.
+
+============================================================
+124. PHASE 118 — DETERMINISTIC FALLBACK
+============================================================
+
+If ML model is unavailable:
+
+return:
+
+"ML prediction unavailable."
+
+The deterministic risk engine may still calculate:
+
+observed cost escalation
+
+observed schedule revision
+
+progress/expenditure gap
+
+data quality.
+
+Clearly label:
+
+"Observed indicators — not model prediction."
+
+============================================================
+125. PHASE 119 — AI FAILURE FALLBACK
+============================================================
+
+If LLM unavailable:
+
+all dashboards and ML functionality continue.
+
+AI assistant returns:
+
+"AI assistant temporarily unavailable. Structured analytics remain available."
+
+============================================================
+126. PHASE 120 — FINAL QUALITY GATE
+============================================================
+
+Before declaring completion:
+
+Run:
+
+data validation
+
+unit tests
+
+API tests
+
+E2E tests
+
+security tests
+
+model evaluation
+
+leakage tests
+
+LLM grounding tests
+
+performance tests
+
+build tests
+
+Docker tests
+
+============================================================
+127. PHASE 121 — FINAL ACCEPTANCE CRITERIA
+============================================================
+
+The project is complete only if:
+
+[ ] PAIMANA CSV imports correctly
+
+[ ] Actual CSV schema is documented
+
+[ ] No fabricated government data exists
+
+[ ] Project codes are preserved
+
+[ ] Historical snapshots are supported
+
+[ ] Cost-overrun target is documented
+
+[ ] Time-overrun target is documented
+
+[ ] Temporal leakage is prevented
+
+[ ] Statistical baseline exists
+
+[ ] ML model exists
+
+[ ] Model comparison exists
+
+[ ] SHAP exists
+
+[ ] Risk scoring exists
+
+[ ] Early warnings exist
+
+[ ] Benchmarking exists
+
+[ ] CUF gap analysis exists
+
+[ ] Portfolio dashboard exists
+
+[ ] Project detail exists
+
+[ ] AI assistant exists
+
+[ ] AI is grounded in database evidence
+
+[ ] Agents have meaningful workflows
+
+[ ] Admin import exists
+
+[ ] Model versioning exists
+
+[ ] Dataset versioning exists
+
+[ ] Audit trail exists
+
+[ ] RBAC exists
+
+[ ] Tests exist
+
+[ ] Documentation exists
+
+[ ] Docker works
+
+============================================================
+128. CRITICAL INSTRUCTION FOR ANTIGRAVITY
+============================================================
+
+DO NOT IMPLEMENT ALL 128 PHASES IN ONE BLIND GENERATION.
+
+Work sequentially.
+
+For each phase:
+
+1. Inspect current repository.
+2. Determine what already exists.
+3. Implement only the current phase.
+4. Run tests.
+5. Fix errors.
+6. Update documentation.
+7. Create a short progress report.
+8. Continue to the next phase.
+
+Never destroy working code to implement a later phase.
+
+============================================================
+129. FIRST ACTION
+============================================================
+
+Before writing application code:
+
+1. Inspect the repository.
+2. Locate the PAIMANA CSV if supplied.
+3. If no CSV is present, create:
+
+data/raw/PAIMANA_DATA_REQUIRED.csv
+
+and STOP only the data-dependent import phase.
+
+4. Inspect the official PAIMANA dashboard.
+
+5. Inspect the CSV schema.
+
+6. Generate:
+
+docs/source-inventory.md
+
+docs/data-dictionary.md
+
+docs/data-quality-report.md
+
+7. Print:
+
+ROW COUNT
+COLUMN COUNT
+COLUMN NAMES
+DATA TYPES
+MISSING VALUES
+UNIQUE PROJECT CODES
+DATE RANGE
+MIN/MAX/MEAN FOR NUMERIC FIELDS
+
+8. Do NOT train an ML model until the dataset structure and target-label feasibility have been established.
+
+============================================================
+130. MOST IMPORTANT PRODUCT PRINCIPLE
+============================================================
+
+This project is NOT:
+
+"Dashboard + Chatbot"
+
+It is:
+
+PAIMANA DATA
+     ↓
+HISTORICAL PROJECT PANEL
+     ↓
+TEMPORAL FEATURE ENGINEERING
+     ↓
+STATISTICAL BASELINE
+     ↓
+ML PREDICTION
+     ↓
+EXPLAINABLE RISK
+     ↓
+EARLY WARNING
+     ↓
+PORTFOLIO PRIORITIZATION
+     ↓
+EVIDENCE-GROUNDED AGENTS
+     ↓
+DECISION SUPPORT
+
+The strongest proof of the system is:
+
+"We took a historical PAIMANA snapshot from before the outcome, predicted risk using only information available at that time, and then compared our prediction with what actually happened."
+
+Build the entire system around proving that statement honestly.
+
+============================================================
+131. FINAL ENGINEERING STANDARD
+============================================================
+
+Code quality:
+
+Production-quality.
+
+No unnecessary abstraction.
+
+No dead code.
+
+No fake APIs.
+
+No fake database records.
+
+No random ML outputs.
+
+No hardcoded dashboard statistics.
+
+No hardcoded project names.
+
+No fake government integrations.
+
+No secrets committed.
+
+No temporal leakage.
+
+No hallucinated AI answers.
+
+No ungrounded recommendations.
+
+Every important number must have a traceable origin.
+
+Every model prediction must have a model version.
+
+Every dataset must have a dataset version.
+
+Every AI answer must have an evidence bundle.
+
+Every risk score must be explainable.
+
+Every warning must have evidence.
+
+Every recommendation must be framed as decision support.
+
+Build this as a serious SIH 2026 submission intended to demonstrate a credible predictive infrastructure-monitoring system for MoSPI.
