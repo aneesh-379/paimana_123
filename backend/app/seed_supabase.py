@@ -5,6 +5,8 @@ Populates projects, warnings, audit_logs, and documents tables on Supabase remot
 
 import os
 import requests
+import pandas as pd
+import numpy as np
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -117,60 +119,95 @@ def seed_supabase_rest():
         "Prefer": "resolution=merge-duplicates"
     }
 
-    # 1. Seed Projects
-    print("[Supabase Seeder] Seeding projects table...")
-    url = f"{SUPABASE_URL}/rest/v1/projects"
-    res = requests.post(url, json=SEED_PROJECTS, headers=headers)
-    if res.status_code in [200, 201]:
-        print("  -> Projects table seeded successfully!")
-    else:
-        print(f"  -> Note on Projects seeding ({res.status_code}): {res.text}")
+def safe_float(val, default=0.0):
+    try:
+        if pd.isna(val):
+            return default
+        f = float(val)
+        return default if np.isnan(f) or np.isinf(f) else f
+    except:
+        return default
 
-    # 2. Seed Warnings
-    print("[Supabase Seeder] Seeding warnings table...")
-    warnings_data = [
-        {
-            "action_id": "ACT-WARN-9041",
-            "project_code": "PAIM-619054",
-            "title": "Notice of Milestone Delay & Catch-up Plan Directive",
-            "recipient": "Project Director, NHAI Phase I",
-            "reason": "Forecast delay 16.5 months and cost escalation >15%",
-            "body": "OFFICIAL NOTICE TO EXECUTING AGENCY: Ref PAIM-619054. You are hereby notified of a 16.5 month forecast schedule overrun and 19.5% budget escalation. Pursuant to Clause 44.1, submit a revised Catch-up Schedule within 14 days.",
-            "status": "PENDING_HUMAN_APPROVAL",
-            "created_at": "2026-09-08T10:00:00Z"
-        }
-    ]
-    url_w = f"{SUPABASE_URL}/rest/v1/warnings"
-    res_w = requests.post(url_w, json=warnings_data, headers=headers)
-    if res_w.status_code in [200, 201]:
-        print("  -> Warnings table seeded successfully!")
-    else:
-        print(f"  -> Note on Warnings seeding ({res_w.status_code}): {res_w.text}")
+def safe_str(val, default="Unknown"):
+    if pd.isna(val) or val is None or str(val).lower() in ['nan', 'none', 'unknown']:
+        return default
+    return str(val).strip()
 
-    # 3. Seed Audit Logs
-    print("[Supabase Seeder] Seeding audit_logs table...")
-    audit_data = [
-        {
-            "id": "AUD-1001",
-            "user_email": "officer@mospi.gov.in",
-            "action": "SYSTEM_INITIALIZED",
-            "resource": "PAIMANA_COCKPIT",
-            "timestamp": "2026-09-08T08:00:00Z"
-        },
-        {
-            "id": "AUD-1002",
-            "user_email": "officer@mospi.gov.in",
-            "action": "MODEL_INFERENCE_RUN",
-            "resource": "XGBOOST_RISK_ENGINE",
-            "timestamp": "2026-09-08T08:30:00Z"
-        }
-    ]
-    url_a = f"{SUPABASE_URL}/rest/v1/audit_logs"
-    res_a = requests.post(url_a, json=audit_data, headers=headers)
-    if res_a.status_code in [200, 201]:
-        print("  -> Audit logs table seeded successfully!")
-    else:
-        print(f"  -> Note on Audit logs seeding ({res_a.status_code}): {res_a.text}")
+def seed_real_mospi_dataset(max_records=100):
+    """Loads and seeds real infrastructure projects from traindata.csv / Testdata.csv."""
+    import pandas as pd
+    import numpy as np
+    dataset_path = "data/processed/traindata.csv"
+    if not os.path.exists(dataset_path):
+        dataset_path = "data/processed/Testdata.csv"
+    if not os.path.exists(dataset_path):
+        dataset_path = "traindata.csv"
+
+    if not os.path.exists(dataset_path):
+        print(f"[Supabase Seeder] Dataset not found at {dataset_path}")
+        return
+
+    print(f"[Supabase Seeder] Loading real records from {dataset_path}...")
+    df = pd.read_csv(dataset_path, low_memory=False).head(max_records)
+
+    records = []
+    for idx, row in df.iterrows():
+        pid = row.get('Project_ID', row.get('project_code', 1000 + idx))
+        p_code = f"PAIM-{pid}" if not str(pid).startswith("PAIM-") else str(pid)
+        
+        orig_c = safe_float(row.get('Original_Cost_Crore', row.get('original_cost', 0.0)))
+        rev_c = safe_float(row.get('Revised_Cost_Crore', row.get('revised_cost', row.get('anticipated_cost', orig_c))), orig_c)
+        exp = safe_float(row.get('Cumulative_Expenditure_Crore', row.get('cumulative_expenditure', row.get('expenditure', 0.0))))
+        phys = safe_float(row.get('Physical_Progress_Percent', row.get('physical_progress', 0.0)))
+        
+        delay = safe_float(row.get('delay', row.get('target_delay', 0.0)))
+        overrun = max(0.0, rev_c - orig_c)
+        overrun_pct = round((overrun / orig_c * 100) if orig_c > 0 else 0.0, 2)
+        is_high = 1 if (delay >= 12 or overrun_pct >= 20.0) else 0
+
+        p_name = safe_str(row.get('Project_Name', row.get('project_name')), f"Infrastructure Project {p_code}")
+        sector = safe_str(row.get('Sector', row.get('sector')), "Road Transport and Highways")
+        ministry = safe_str(row.get('Ministry', row.get('ministry')), "Ministry of Road Transport and Highways")
+        state = safe_str(row.get('State', row.get('state')), "All India")
+        agency = safe_str(row.get('Agency', row.get('implementing_agency')), "NHAI")
+
+        records.append({
+            "project_code": p_code,
+            "project_name": p_name,
+            "sector": sector,
+            "ministry": ministry,
+            "state": state,
+            "implementing_agency": agency,
+            "original_cost": orig_c,
+            "revised_cost": rev_c,
+            "expenditure": exp,
+            "physical_progress": phys,
+            "sanction_date": safe_str(row.get('Approval_Date', row.get('sanction_date')), "2021-01-01"),
+            "original_doc": safe_str(row.get('Original_Target_Date', row.get('original_doc')), "2024-01-01"),
+            "snapshot_date": safe_str(row.get('Revised_Target_Date', row.get('snapshot_date')), "2026-01-01"),
+            "target_final_delay_months": delay,
+            "target_cost_overrun_pct": overrun_pct,
+            "target_is_high_risk": is_high
+        })
+
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates"
+    }
+
+    print(f"[Supabase Seeder] Batch inserting {len(records)} projects into Supabase...")
+    chunk_size = 50
+    for i in range(0, len(records), chunk_size):
+        chunk = records[i:i+chunk_size]
+        url = f"{SUPABASE_URL}/rest/v1/projects"
+        res = requests.post(url, json=chunk, headers=headers)
+        if res.status_code in [200, 201]:
+            print(f"  -> Batch {i//chunk_size + 1} ({len(chunk)} items) inserted.")
+        else:
+            print(f"  -> Batch {i//chunk_size + 1} response ({res.status_code}): {res.text[:100]}")
 
 if __name__ == "__main__":
     seed_supabase_rest()
+    seed_real_mospi_dataset(max_records=100)

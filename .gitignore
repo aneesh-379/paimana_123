@@ -75,9 +75,16 @@ Thumbs.db
 ehthumbs.db
 
 # ==========================================
-# Temporary / Log / Output Files
+# Temporary / Log / Database Files
 # ==========================================
 *.log
 logs/
 *.sqlite3
+*.db
+backend/app/paimana.db
 scratch/
+.system_generated/
+.agents/
+*.tmp
+*.bak
+Desktop.ini

@@ -41,6 +41,7 @@ class MitigationAgent(BaseAgent):
             llm_res = GLOBAL_LLM_PROVIDER.generate_response(
                 system_prompt=self.system_prompt,
                 user_prompt=mit_prompt,
+                evidence_bundle={"project_code": proj_code, "phys_prog": phys_prog, "fin_gap": fin_gap, "citations": citations},
                 fallback_response={"summary": "Mitigation actions formulated."}
             )
 

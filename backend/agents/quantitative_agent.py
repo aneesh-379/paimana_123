@@ -56,6 +56,7 @@ class QuantitativeAgent(BaseAgent):
             llm_res = GLOBAL_LLM_PROVIDER.generate_response(
                 system_prompt=self.system_prompt,
                 user_prompt=analysis_prompt,
+                evidence_bundle={"orig_cost": orig_cost, "phys_prog": phys_prog, "predicted_delay": predicted_delay},
                 fallback_response={"summary": f"Quant Analysis: Physical progress {phys_prog}%, financial gap {fin_phys_gap}%."}
             )
 

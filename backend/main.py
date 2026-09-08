@@ -5,6 +5,7 @@ Serves predictive risk intelligence, multi-agent orchestrator queries, RAG docum
 CSV ingestion, warning approval workflows, and audit logging.
 """
 
+import re
 import os
 import uuid
 import time
@@ -93,12 +94,14 @@ def load_system_artifacts():
     else:
         FEATURE_ENGINEER = PAIMANAFeatureEngineer()
 
-    real_csv_path = os.path.join(PROCESSED_DIR, "paimana_real_2001_2026_dataset.csv")
+    real_csv_path = os.path.join(PROCESSED_DIR, "traindata.csv")
     if not os.path.exists(real_csv_path):
-        real_csv_path = os.path.join(PROCESSED_DIR, "paimana_2001_2026_archive_snapshots.csv")
+        real_csv_path = os.path.join(PROCESSED_DIR, "Testdata.csv")
+    if not os.path.exists(real_csv_path):
+        real_csv_path = "traindata.csv"
 
     if os.path.exists(real_csv_path):
-        REAL_DATASET = pd.read_csv(real_csv_path)
+        REAL_DATASET = pd.read_csv(real_csv_path, low_memory=False)
     else:
         REAL_DATASET = pd.DataFrame([
             {
@@ -159,6 +162,8 @@ class AuthLoginRequest(BaseModel):
 class AIQueryRequest(BaseModel):
     projectId: str = "PAIM-619054"
     message: str = "Why is this project high risk and what should we do?"
+    fileType: Optional[str] = None
+    fileContent: Optional[str] = None
 
 class DraftWarningRequest(BaseModel):
     projectId: str = "PAIM-619054"
@@ -306,22 +311,21 @@ def get_project_history(project_id: str):
 def get_project_predictions(project_id: str):
     history = ML_CLIENT.getPredictionHistory(project_id)
     if not history:
-        # Return default evaluation
+        # Lookup real project record from dataset if present
+        rec = risk_engine.lookup_project(project_id) or {}
+        orig_cost = float(rec.get("original_cost", 1162.76))
+        rev_cost = float(rec.get("revised_cost", 1390.0))
+        expenditure = float(rec.get("expenditure", 494.72))
+        phys_prog = float(rec.get("physical_progress", 42.5))
+        
         req = MLPredictionRequest(
-            project_code=project_id, original_cost=1162.76, revised_cost=1390.0,
-            expenditure=494.72, physical_progress=42.5
+            project_code=project_id,
+            original_cost=orig_cost,
+            revised_cost=rev_cost,
+            expenditure=expenditure,
+            physical_progress=phys_prog
         )
-        def _eval(d):
-            return {
-                "project_code": project_id,
-                "predictions": {
-                    "predicted_delay_months": {"value": 14.5},
-                    "predicted_cost_overrun_pct": {"value": 18.2},
-                    "risk_score_pct": {"value": 82.0},
-                    "risk_tier": {"value": "CRITICAL"}
-                }
-            }
-        latest = ML_CLIENT.predictProject(req, internal_eval_func=_eval).dict()
+        latest = ML_CLIENT.predictProject(req).dict()
         history = [latest]
 
     return {"project_code": project_id, "current_prediction": history[-1], "prediction_history": history}
@@ -410,27 +414,48 @@ def get_project_documents(project_id: str):
         ]
     return {"project_id": project_id, "documents": docs}
 
-# 6. AI & ORCHESTRATOR ENDPOINT (Phase 91, Section 10)
+# 6. AI & ORCHESTRATOR ENDPOINT (Two-Tier Multi-Agent System)
 @app.post("/api/v1/ai/query")
 @app.post("/api/v1/assistant/query")
 def query_ai_orchestrator(req: AIQueryRequest):
     proj_code = req.projectId
+    matched_paim = re.search(r'(PAIM-\d+)', req.message, re.IGNORECASE)
+    if matched_paim:
+        proj_code = matched_paim.group(1).upper()
+
     proj_record = {}
     if REAL_DATASET is not None and not REAL_DATASET.empty:
         match = REAL_DATASET[REAL_DATASET["project_code"] == proj_code]
         if not match.empty:
             proj_record = match.iloc[0].to_dict()
+        else:
+            for idx, r in REAL_DATASET.iterrows():
+                pname = str(r.get("project_name", "")).lower()
+                if pname and any(k in req.message.lower() for k in pname.split() if len(k) > 4):
+                    proj_record = r.to_dict()
+                    proj_code = proj_record["project_code"]
+                    break
 
     if not proj_record:
-        proj_record = {
+        proj_record = risk_engine.lookup_project(proj_code) or {
             "project_code": proj_code,
-            "original_cost": 1162.76,
-            "revised_cost": 1390.0,
-            "expenditure": 494.72,
-            "physical_progress": 42.5
+            "project_name": f"Infrastructure Project {proj_code}",
+            "original_cost": 1000.0,
+            "revised_cost": 1000.0,
+            "expenditure": 450.0,
+            "physical_progress": 45.0
         }
 
-    res = ORCHESTRATOR.execute_workflow(req.message, proj_record)
+    input_type = req.fileType.upper() if req.fileType else "TEXT"
+    payload = req.fileContent if req.fileContent else req.message
+
+    user_input = {
+        "type": input_type,
+        "payload": payload,
+        "message": req.message
+    }
+
+    res = ORCHESTRATOR.execute_workflow(user_input, proj_record, input_type=input_type)
     log_audit_event("officer@mospi.gov.in", "AI_ORCHESTRATOR_QUERY", proj_code, after={"intent": res.get("detected_intent")})
     return res
 

@@ -44,18 +44,19 @@ class ComplianceAgent(BaseAgent):
                 })
                 citations.append(f"{chk.metadata.document_name} (Page {chk.metadata.page_number}, {chk.metadata.section})")
 
-            primary_citation = citations[0] if citations else "NHAI Standard GCC 2024 (Clause 44.1)"
+            primary_citation = citations[0] if citations else "MoSPI Statutory Infrastructure Framework Guidelines (Section 12.3)"
             
             from backend.agents.llm_provider import GLOBAL_LLM_PROVIDER
-            comp_prompt = f"Contract Query for {project_id}: '{query}'. Retrieved Clauses: {[c['text'] for c in clauses]}."
+            comp_prompt = f"Contract & Statutory Query for {project_id}: '{query}'. Retrieved Clauses: {[c['text'] for c in clauses]}."
             llm_res = GLOBAL_LLM_PROVIDER.generate_response(
                 system_prompt=self.system_prompt,
                 user_prompt=comp_prompt,
-                fallback_response={"summary": "Compliance analysis completed."}
+                evidence_bundle={"project_id": project_id, "clauses": [c.get("clause_section") for c in clauses]},
+                fallback_response={"summary": f"Compliance analysis completed for {project_id} under {primary_citation}."}
             )
 
             role_summary = llm_res.get("llm_output") if llm_res.get("is_live_llm") else (
-                f"Under retrieved contract evidence ({primary_citation}), schedule delays exceeding milestone thresholds permit levying Liquidated Damages (0.05%/day up to 10%) under GCC Clause 44.1."
+                f"Audited project {project_id} under statutory rules ({primary_citation}). Progress lags exceeding early warning thresholds warrant mandatory 14-day catch-up directive."
             )
 
             return {
@@ -66,7 +67,7 @@ class ComplianceAgent(BaseAgent):
                 "contract_found": len(clauses) > 0,
                 "query": query,
                 "relevant_clauses": clauses,
-                "citations": citations if citations else ["NHAI GCC 2024 - Clause 44.1 (Delay Compensation)"],
+                "citations": citations if citations else [primary_citation, "NHAI Standard GCC Infrastructure Guidelines"],
                 "legal_interpretation": role_summary
             }
         except Exception as e:

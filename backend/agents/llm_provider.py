@@ -189,6 +189,16 @@ class LLMProvider:
                 "evidence_bundle_used": evidence_bundle
             }
 
+        # Check if provider had recent network timeout failure
+        if getattr(self, "_last_api_failure", 0) and (time.time() - self._last_api_failure < 60.0):
+            return {
+                "is_live_llm": False,
+                "llm_provider": "Deterministic Evidence Engine (Network Failover)",
+                "evidence_category": EvidenceCategory.AI_INTERPRETED,
+                "analysis": fallback_response,
+                "evidence_bundle_used": evidence_bundle
+            }
+
         # Execute Live API call
         if status_info["has_nvidia_key"]:
             try:
@@ -204,6 +214,7 @@ class LLMProvider:
                     "evidence_bundle_used": evidence_bundle
                 }
             except Exception as e:
+                self._last_api_failure = time.time()
                 print(f"[!] NVIDIA NIM API Error: {e}. Falling back to evidence engine.")
 
         if status_info["has_gemini_key"]:
@@ -271,7 +282,7 @@ class LLMProvider:
         }
 
         req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers)
-        with urllib.request.urlopen(req, timeout=25) as resp:
+        with urllib.request.urlopen(req, timeout=5) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             return data["choices"][0]["message"]["content"]
 
@@ -283,7 +294,7 @@ class LLMProvider:
         payload = {"contents": [{"parts": [{"text": prompt_content}]}]}
         req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
         
-        with urllib.request.urlopen(req, timeout=15) as resp:
+        with urllib.request.urlopen(req, timeout=5) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             return data["candidates"][0]["content"]["parts"][0]["text"]
 
@@ -295,7 +306,7 @@ class LLMProvider:
         payload = {"model": "gpt-4o", "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": prompt_content}]}
         req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json", "Authorization": f"Bearer {self.openai_key}"})
         
-        with urllib.request.urlopen(req, timeout=15) as resp:
+        with urllib.request.urlopen(req, timeout=5) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             return data["choices"][0]["message"]["content"]
 

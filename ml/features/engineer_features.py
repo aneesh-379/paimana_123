@@ -55,6 +55,30 @@ class PAIMANAFeatureEngineer:
         """Transforms snapshot DataFrame into time-aware ML feature matrix."""
         df_feats = df.copy()
 
+        # Ensure required columns exist with sensible defaults
+        if "sanction_date" not in df_feats.columns:
+            df_feats["sanction_date"] = "2024-01-01"
+        if "original_doc" not in df_feats.columns:
+            df_feats["original_doc"] = "2027-01-01"
+        if "revised_doc" not in df_feats.columns:
+            df_feats["revised_doc"] = "2027-01-01"
+        if "snapshot_date" not in df_feats.columns:
+            df_feats["snapshot_date"] = "2026-01-01"
+        if "sector" not in df_feats.columns:
+            df_feats["sector"] = "Road Transport and Highways"
+        if "ministry" not in df_feats.columns:
+            df_feats["ministry"] = "Ministry of Road Transport and Highways"
+        if "state" not in df_feats.columns:
+            df_feats["state"] = "National"
+        if "original_cost" not in df_feats.columns:
+            df_feats["original_cost"] = 1000.0
+        if "revised_cost" not in df_feats.columns:
+            df_feats["revised_cost"] = df_feats["original_cost"]
+        if "expenditure" not in df_feats.columns:
+            df_feats["expenditure"] = df_feats["original_cost"] * 0.45
+        if "physical_progress" not in df_feats.columns:
+            df_feats["physical_progress"] = 45.0
+
         # Parse dates safely
         sanction_dt = pd.to_datetime(df_feats["sanction_date"], errors="coerce")
         orig_doc_dt = pd.to_datetime(df_feats["original_doc"], errors="coerce")
