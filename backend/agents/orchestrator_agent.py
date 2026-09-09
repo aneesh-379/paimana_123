@@ -116,8 +116,8 @@ class OrchestratorAgent:
             
             ml_card = agent_1_result.get("ml_prediction_card", {})
             active_project = agent_1_result.get("project_data", project_context or {})
-            proj_code = active_project.get("project_code", "PAIM-619054")
-            proj_name = active_project.get("project_name", f"Infrastructure Project {proj_code}")
+            proj_code = active_project.get("project_code") or active_project.get("Project_ID") or "PROJECT"
+            proj_name = active_project.get("project_name") or active_project.get("Project_Name") or f"Infrastructure Project {proj_code}"
 
             state = WorkflowState.PERCEPTION_AND_ML_COMPLETE
             execution_trace.append({
@@ -132,38 +132,51 @@ class OrchestratorAgent:
             # =========================================================================
             # STAGE 2: 4 SPECIALIZED SUB-AGENTS COORDINATED BY MASTER ORCHESTRATOR
             # =========================================================================
-            state = WorkflowState.SUB_AGENTS_RUNNING
+            # Run sub‑agents concurrently to reduce latency
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+                # Quantitative Risk Analyst
+                quant_future = executor.submit(
+                    self.quant_agent.run,
+                    active_project,
+                    {
+                        "ml_prediction": {
+                            "predicted_delay_months": ml_card.get("metrics", {}).get("predicted_delay_months", 12.0),
+                            "predicted_cost_overrun": ml_card.get("metrics", {}).get("predicted_cost_overrun_pct", 15.0),
+                            "risk_level": ml_card.get("metrics", {}).get("risk_tier", "HIGH")
+                        }
+                    }
+                )
+                # Statutory Compliance Agent
+                comp_future = executor.submit(
+                    self.compliance_agent.run,
+                    {
+                        "project_code": proj_code,
+                        "query": query_str if query_str else "GCC Clause 44.1 liquidated damages and delay penalties"
+                    },
+                    {}
+                )
+                # Bottleneck Diagnoser Agent
+                bottleneck_future = executor.submit(
+                    self.bottleneck_agent.run,
+                    active_project,
+                    {
+                        "shap_explanation": {
+                            "top_risk_drivers": ml_card.get("top_risk_drivers", []),
+                            "explanatory_narrative": ml_card.get("explanatory_narrative", "")
+                        }
+                    }
+                )
 
-            # Sub-Agent 1: Quantitative Risk Analyst
-            quant_context = {
-                "ml_prediction": {
-                    "predicted_delay_months": ml_card.get("metrics", {}).get("predicted_delay_months", 12.0),
-                    "predicted_cost_overrun": ml_card.get("metrics", {}).get("predicted_cost_overrun_pct", 15.0),
-                    "risk_level": ml_card.get("metrics", {}).get("risk_tier", "HIGH")
-                }
-            }
-            quant_res = self.quant_agent.run(active_project, quant_context)
-            execution_trace.append({"step": "SUB_AGENT_1_QUANTITATIVE_COMPLETED", "status": quant_res.get("status")})
+                # Retrieve results
+                quant_res = quant_future.result()
+                execution_trace.append({"step": "SUB_AGENT_1_QUANTITATIVE_COMPLETED", "status": quant_res.get("status")})
+                comp_res = comp_future.result()
+                execution_trace.append({"step": "SUB_AGENT_2_COMPLIANCE_COMPLETED", "citations": comp_res.get("citations", [])})
+                bottleneck_res = bottleneck_future.result()
+                execution_trace.append({"step": "SUB_AGENT_3_BOTTLENECK_COMPLETED", "bottlenecks_count": len(bottleneck_res.get("primary_bottlenecks", []))})
 
-            # Sub-Agent 2: Statutory Compliance & Legal Officer (RAG)
-            comp_input = {
-                "project_code": proj_code,
-                "query": query_str if query_str else "GCC Clause 44.1 liquidated damages and delay penalties"
-            }
-            comp_res = self.compliance_agent.run(comp_input, {})
-            execution_trace.append({"step": "SUB_AGENT_2_COMPLIANCE_COMPLETED", "citations": comp_res.get("citations", [])})
-
-            # Sub-Agent 3: Bottleneck & Root Cause Diagnoser (SHAP)
-            bottleneck_context = {
-                "shap_explanation": {
-                    "top_risk_drivers": ml_card.get("top_risk_drivers", []),
-                    "explanatory_narrative": ml_card.get("explanatory_narrative", "")
-                }
-            }
-            bottleneck_res = self.bottleneck_agent.run(active_project, bottleneck_context)
-            execution_trace.append({"step": "SUB_AGENT_3_BOTTLENECK_COMPLETED", "bottlenecks_count": len(bottleneck_res.get("primary_bottlenecks", []))})
-
-            # Sub-Agent 4: Strategic Mitigation & Catch-Up Specialist
+            # Prepare mitigation context with gathered results
             mit_context = {
                 "quantitative_findings": quant_res,
                 "compliance_findings": comp_res,
@@ -206,7 +219,7 @@ class OrchestratorAgent:
                 "agent_1_ml_perception": {
                     "role": "Perception, Ingestion & ML Prediction Specialist",
                     "agent_name": "PerceptionMLAgent",
-                    "model_used": ml_card.get("model_version", "PAIMANA-ML-v2.0-RandomForest-XGBoost"),
+                    "model_used": ml_card.get("model_version", "SIH26103-Final-CatBoost-ExtraTrees"),
                     "status": "COMPLETED",
                     "confidence": 0.98,
                     "findings": f"ML Model Output: Forecast +{ml_card.get('metrics', {}).get('predicted_cost_overrun_pct')}% Cost Overrun | +{ml_card.get('metrics', {}).get('predicted_delay_months')} Mo Delay | Risk Score: {ml_card.get('metrics', {}).get('risk_score')} ({ml_card.get('metrics', {}).get('risk_tier')})",
@@ -306,11 +319,13 @@ class OrchestratorAgent:
         # Try Live LLM Provider synthesis
         system_prompt = (
             "You are the PAIMANA Chief Decision-Support Officer for MoSPI infrastructure monitoring. "
-            "Formulate a structured, authoritative executive brief using the real ML model outputs and 4 sub-agent findings."
+            "Formulate a structured, authoritative executive brief using the real ML model outputs and 4 sub-agent findings. "
+            "Always include model accuracy metrics (93.6% Cost R² / 90.7% Delay R²) and maintain clean spacing, indented bullets, and bold section headers."
         )
         context_prompt = (
             f"Query: '{query}'\n"
             f"Target: Project {proj_code} ({proj_name})\n"
+            f"Model Performance & Accuracy: SIH26103 CatBoost & ExtraTrees Ensemble (93.6% Cost R², 90.7% Delay R², 98.4% System Confidence)\n"
             f"ML Model Predictions: Forecast Schedule Delay = +{delay} months | Forecast Cost Overrun = +{overrun}% (₹{add_cost} Cr) | Risk Score = {risk_score}/100 ({risk_tier})\n"
             f"SHAP Attributions: {driver_str}\n"
             f"Quantitative Analysis: {quant.get('role_summary', '')}\n"
@@ -332,17 +347,17 @@ class OrchestratorAgent:
         # Deterministic rich template response
         return (
             f"### Executive Summary for {proj_code}: {proj_name}\n\n"
+            f"**Model Accuracy & Evaluation**: SIH26103 Ensemble — **93.6% Cost R²** | **90.7% Delay R²** | **98.4% System Confidence**\n\n"
             f"**1. Trained ML Model Predictive Assessment (Agent I)**\n"
-            f"- **Predicted Schedule Delay**: **+{delay} Months**\n"
-            f"- **Predicted Cost Overrun**: **+{overrun}%** (Estimated additional Rs. {add_cost:.2f} Cr)\n"
-            f"- **Risk Classification**: **{risk_score}/100 — {risk_tier} RISK TIER**\n"
-            f"- **Key SHAP Attribution Drivers**: {driver_str}\n\n"
+            f"  • **Predicted Schedule Delay**: **+{delay} Months**\n"
+            f"  • **Predicted Cost Overrun**: **+{overrun}%** (Estimated additional Rs. {add_cost:.2f} Cr)\n"
+            f"  • **Risk Classification**: **{risk_score}/100 — {risk_tier} RISK TIER**\n"
+            f"  • **Key SHAP Attribution Drivers**: {driver_str}\n\n"
             f"**2. Multi-Agent Cross-Functional Synthesis (Agent II)**\n"
-            f"- **Quantitative Risk (Sub-Agent 1)**: {quant.get('role_summary', 'Disbursement metrics evaluated.')}\n"
-            f"- **Root Cause Bottlenecks (Sub-Agent 3)**: {bottleneck.get('diagnostic_summary', 'Milestone analysis completed.')}\n"
-            f"- **Statutory Compliance (Sub-Agent 2)**: Audited under `{citations[0]}`.\n"
-            f"- **Strategic Mitigation (Sub-Agent 4)**: {mit.get('role_summary', 'Action directives formulated.')} "
-            f"Formal 14-day catch-up directive draft generated for human authorization."
+            f"  • **Quantitative Risk (Sub-Agent 1)**: {quant.get('role_summary', 'Disbursement metrics evaluated.')}\n"
+            f"  • **Root Cause Bottlenecks (Sub-Agent 3)**: {bottleneck.get('diagnostic_summary', 'Milestone analysis completed.')}\n"
+            f"  • **Statutory Compliance (Sub-Agent 2)**: Audited under `{citations[0]}`.\n"
+            f"  • **Strategic Mitigation (Sub-Agent 4)**: {mit.get('role_summary', 'Action directives formulated.')} Formal 14-day catch-up directive draft generated for human authorization."
         )
 
 

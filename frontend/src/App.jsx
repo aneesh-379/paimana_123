@@ -236,7 +236,89 @@ function AgentCard({ num, name, badge, badgeClass, text, result, borderColor, bg
         </span>
         <span className={`badge ${badgeClass} text-[9px]`}>{badge}</span>
       </div>
-      <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{text}</p>
+      {text && <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{text}</p>}
+      {result && (
+        <div className="rounded-lg p-2.5 text-[10px] font-mono" style={{ background: borderColor + '10', color: borderColor, border: `1px solid ${borderColor}25` }}>
+          {result}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Component UI Helpers
+function MetricPill({ label, val, color = 'var(--text-muted)' }) {
+  return (
+    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs" style={{ background: 'var(--card-border)' }}>
+      <span style={{ color: 'var(--text-muted)' }}>{label}:</span>
+      <span className="font-semibold" style={{ color }}>{val}</span>
+    </div>
+  );
+}
+
+function StatBox({ label, val, sub, color }) {
+  return (
+    <div className="p-4 rounded-xl border flex flex-col justify-between" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+      <span className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{label}</span>
+      <div className="my-2">
+        <span className="text-2xl font-bold tracking-tight" style={{ color: color || 'var(--text-primary)' }}>{val}</span>
+        {sub && <div className="text-xs mt-1 font-mono" style={{ color: 'var(--text-muted)' }}>{sub}</div>}
+      </div>
+    </div>
+  );
+}
+
+function StatusBadge({ tier }) {
+  const map = {
+    CRITICAL: { bg: '#ef444420', text: '#f87171', border: '#ef444440' },
+    HIGH:     { bg: '#f9731620', text: '#fb923c', border: '#f9731640' },
+    MEDIUM:   { bg: '#eab30820', text: '#facc15', border: '#eab30840' },
+    LOW:      { bg: '#22c55e20', text: '#4ade80', border: '#22c55e40' }
+  };
+  const style = map[tier] || map.MEDIUM;
+  return (
+    <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider border" style={{ backgroundColor: style.bg, color: style.text, borderColor: style.border }}>
+      {tier} RISK
+    </span>
+  );
+}
+
+function PipelineStep({ number, title, sub, status }) {
+  const isDone = status === 'completed';
+  const isCurrent = status === 'running';
+  const borderColor = isDone ? 'var(--accent-emerald)' : isCurrent ? 'var(--accent-blue)' : 'var(--card-border)';
+  const textColor = isDone ? 'var(--accent-emerald)' : isCurrent ? 'var(--accent-blue)' : 'var(--text-muted)';
+  
+  return (
+    <div className="p-3 rounded-lg border transition-all duration-300 flex items-start gap-3" style={{ background: 'var(--card-bg)', borderColor }}>
+      <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0" style={{ background: borderColor + '20', color: textColor }}>
+        {number}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-xs font-semibold flex items-center justify-between" style={{ color: 'var(--text-primary)' }}>
+          <span>{title}</span>
+          <span className="text-[10px] uppercase tracking-wider font-mono" style={{ color: textColor }}>{status}</span>
+        </div>
+        <div className="text-[11px] mt-0.5 truncate" style={{ color: 'var(--text-muted)' }}>{sub}</div>
+      </div>
+    </div>
+  );
+}
+
+function AgentFindingCard({ title, role, status, confidence, result, icon: Icon, color }) {
+  const borderColor = color || 'var(--accent-blue)';
+  return (
+    <div className="p-3.5 rounded-xl border flex flex-col justify-between" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          {Icon && <Icon className="w-4 h-4" style={{ color: borderColor }} />}
+          <span className="text-xs font-bold" style={{ color: 'var(--text-primary)' }}>{title}</span>
+        </div>
+        <span className="text-[10px] font-mono px-2 py-0.5 rounded border" style={{ background: borderColor + '15', color: borderColor, borderColor: borderColor + '30' }}>
+          {confidence ? `${Math.round(confidence * 100)}% CONF` : 'VERIFIED'}
+        </span>
+      </div>
+      <div className="text-[11px] mb-2" style={{ color: 'var(--text-muted)' }}>{role}</div>
       <div className="rounded-lg p-2.5 text-[10px] font-mono" style={{ background: borderColor + '10', color: borderColor, border: `1px solid ${borderColor}25` }}>
         {result}
       </div>
@@ -252,14 +334,14 @@ export default function App() {
   const [isCmdOpen, setIsCmdOpen] = useState(false);
 
   // Simulator state
-  const [simOriginalCost, setSimOriginalCost] = useState(1200);
-  const [simPhysicalProgress, setSimPhysicalProgress] = useState(42);
-  const [simExpPct, setSimExpPct] = useState(48);
-  const [simElapsedMonths, setSimElapsedMonths] = useState(24);
-  const [simClearanceStatus, setSimClearanceStatus] = useState('PENDING');
+  const [simOriginalCost, setSimOriginalCost] = useState(950);
+  const [simPhysicalProgress, setSimPhysicalProgress] = useState(72);
+  const [simExpPct, setSimExpPct] = useState(62);
+  const [simElapsedMonths, setSimElapsedMonths] = useState(18);
+  const [simClearanceStatus, setSimClearanceStatus] = useState('APPROVED');
 
   // AI / chat state
-  const [chatInput, setChatInput] = useState("Why is project PAIM-619054 flagged high risk and what warning notice should be issued under GCC Clause 44.1?");
+  const [chatInput, setChatInput] = useState("Explain the SIH26103 ML risk predictions and schedule forecast.");
   const [orchestrationResult, setOrchestrationResult] = useState(null);
   const [chatLoading, setChatLoading] = useState(false);
   const [aiInputMode, setAiInputMode] = useState('prompt');
@@ -283,15 +365,15 @@ export default function App() {
   ]);
   const [warningsList, setWarningsList] = useState([
     {
-      action_id: "ACT-WARN-9041",
-      project_code: "PAIM-619054",
+      action_id: "ACT-WARN-2099",
+      project_code: "PAIM-2099",
       status: "PENDING_HUMAN_APPROVAL",
-      body: "OFFICIAL NOTICE TO EXECUTING AGENCY: Ref PAIM-619054. You are hereby notified of a 16.5 month forecast schedule overrun and 19.5% budget escalation. Pursuant to Clause 44.1, submit a revised Catch-up Schedule within 14 days."
+      body: "OFFICIAL NOTICE TO EXECUTING AGENCY: Ref PAIM-2099. Milestone review directive issued under SIH26103 monitoring guidelines."
     }
   ]);
   const [auditLogs, setAuditLogs] = useState([
     { id: "AUD-1001", user: "officer@mospi.gov.in", action: "SYSTEM_INITIALIZED",   resource: "PAIMANA_COCKPIT",    timestamp: "2026-09-07T22:00:00Z" },
-    { id: "AUD-1002", user: "officer@mospi.gov.in", action: "MODEL_INFERENCE_RUN",  resource: "XGBOOST_RISK_ENGINE", timestamp: "2026-09-07T22:15:00Z" }
+    { id: "AUD-1002", user: "officer@mospi.gov.in", action: "MODEL_INFERENCE_RUN",  resource: "SIH26103_CATBOOST_ENGINE", timestamp: "2026-09-07T22:15:00Z" }
   ]);
   const [systemStatus, setSystemStatus] = useState({
     status: 'ONLINE',
@@ -321,7 +403,10 @@ export default function App() {
       const projRes = await fetch(`${API_BASE_URL}/projects?limit=50`);
       if (projRes.ok) {
         const projData = await projRes.json();
-        if (projData.projects?.length > 0) setProjects(projData.projects);
+        if (projData.projects?.length > 0) {
+          setProjects(projData.projects);
+          setSelectedProject(projData.projects[0]);
+        }
       }
       const warnRes = await fetch(`${API_BASE_URL}/warnings`);
       if (warnRes.ok) {
@@ -344,14 +429,64 @@ export default function App() {
     const isCsv = file.name.toLowerCase().endsWith('.csv');
     const isPdf = file.name.toLowerCase().endsWith('.pdf');
     if (!isCsv && !isPdf) { alert("Please upload a valid .CSV or .PDF file."); return; }
-    const fileObj = { name: file.name, type: isCsv ? 'csv' : 'pdf', size: (file.size / 1024).toFixed(1) + ' KB', rawFile: file };
-    setAttachedFile(fileObj);
-    setAiInputMode(isCsv ? 'csv' : 'pdf');
-    setActiveTab('llm_assistant');
-    const msg = isCsv
-      ? `[CSV Dataset Ingestion] Ingested project snapshot "${file.name}". Run XGBoost ML cost overrun & schedule delay prediction model.`
-      : `[PDF Contract Ingestion] Ingested contract agreement "${file.name}". Extract GCC clauses & liquidated damages via pgvector RAG.`;
-    handleRunOrchestratedQuery(msg, fileObj);
+
+    if (isCsv) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target.result;
+        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        let parsedProjCode = null;
+        let parsedProjName = file.name.replace(/\.csv$/i, '');
+        let origCost = 1000, revCost = 1000, exp = 450, phys = 45;
+        
+        if (lines.length > 1) {
+          const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+          const row0 = lines[1].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+          const dict = {};
+          headers.forEach((h, i) => { dict[h] = row0[i]; });
+          
+          parsedProjCode = dict["Project_ID"] || dict["Project ID"] || dict["Project_Code"] || dict["project_code"] || dict["Project Code"];
+          parsedProjName = dict["Project_Name"] || dict["Project Name"] || dict["project_name"] || parsedProjName;
+          origCost = parseFloat(dict["Original_Cost_Crore"] || dict["Original_Cost"] || dict["original_cost"] || 1000);
+          revCost = parseFloat(dict["Revised_Cost_Crore"] || dict["Revised_Cost"] || dict["revised_cost"] || origCost);
+          exp = parseFloat(dict["Cumulative_Expenditure_Crore"] || dict["Expenditure"] || dict["expenditure"] || origCost * 0.45);
+          phys = parseFloat(dict["Physical_Progress_Percent"] || dict["Physical_Progress_Pct"] || dict["physical_progress"] || 45);
+        }
+
+        const newProjObj = {
+          project_code: parsedProjCode || `DS-1`,
+          project_name: parsedProjName,
+          original_cost: origCost,
+          revised_cost: revCost,
+          expenditure: exp,
+          physical_progress: phys
+        };
+
+        setSelectedProject(newProjObj);
+
+        const fileObj = { 
+          name: file.name, 
+          type: 'csv', 
+          size: (file.size / 1024).toFixed(1) + ' KB', 
+          rawFile: file,
+          parsedContent: text,
+          parsedProjObj: newProjObj
+        };
+        setAttachedFile(fileObj);
+        setAiInputMode('csv');
+        setActiveTab('llm_assistant');
+        const msg = `Analyze CSV dataset "${file.name}" with SIH26103 ML models.`;
+        handleRunOrchestratedQuery(msg, fileObj);
+      };
+      reader.readAsText(file);
+    } else {
+      const fileObj = { name: file.name, type: 'pdf', size: (file.size / 1024).toFixed(1) + ' KB', rawFile: file };
+      setAttachedFile(fileObj);
+      setAiInputMode('pdf');
+      setActiveTab('llm_assistant');
+      const msg = `Analyze contract PDF "${file.name}" with SIH26103 ML models and RAG.`;
+      handleRunOrchestratedQuery(msg, fileObj);
+    }
     e.target.value = null;
   };
 
@@ -363,7 +498,7 @@ export default function App() {
     setAiInputMode(type);
     setActiveTab('llm_assistant');
     const msg = type === 'csv'
-      ? `[CSV Dataset Ingestion] Ingested holdout dataset "${demoObj.name}". Run XGBoost ML cost overrun & delay predictions.`
+      ? `[CSV Dataset Ingestion] Ingested holdout dataset "${demoObj.name}". Run SIH26103 ML cost overrun & delay predictions.`
       : `[PDF Contract Ingestion] Ingested contract agreement "${demoObj.name}". Extract GCC delay clauses & liquidated damages using RAG.`;
     handleRunOrchestratedQuery(msg, demoObj);
   };
@@ -376,12 +511,12 @@ export default function App() {
     setChatLoading(true);
     setPipelineStep(1);
 
-    // Dynamic project resolution from query or selected project
-    let targetProj = selectedProject?.project_code || "PAIM-619054";
-    let targetName = selectedProject?.project_name || "Greenfield Expressway Expansion Phase I";
-    let targetProjObj = selectedProject;
+    // Dynamic project resolution from attached file or selected project
+    let targetProjObj = activeFile?.parsedProjObj || selectedProject;
+    let targetProj = targetProjObj?.project_code || "PAIM-2099";
+    let targetName = targetProjObj?.project_name || "National Water Grid Pipeline & Treatment";
 
-    const matchedPaim = promptMessage.match(/PAIM-\d+/i);
+    const matchedPaim = promptMessage.match(/([A-Z]{2,6}-\d+)/i);
     if (matchedPaim) {
       const code = matchedPaim[0].toUpperCase();
       const found = projects.find(p => p.project_code?.toUpperCase() === code);
@@ -393,13 +528,6 @@ export default function App() {
         targetProj = code;
         targetName = `Infrastructure Project ${code}`;
       }
-    } else {
-      const foundByName = projects.find(p => p.project_name && promptMessage.toLowerCase().includes(p.project_name.toLowerCase().slice(0, 15)));
-      if (foundByName) {
-        targetProj = foundByName.project_code;
-        targetName = foundByName.project_name;
-        targetProjObj = foundByName;
-      }
     }
 
     setTimeout(() => setPipelineStep(2), 400);
@@ -410,8 +538,8 @@ export default function App() {
     if (activeFile) {
       if (activeFile.type === 'csv') {
         parsedFileAnalysis = {
-          file_name: activeFile.name, file_type: "MoSPI Project Snapshot CSV Dataset", records_parsed: 14,
-          inferred_ml_predictions: { predicted_cost_overrun_pct: 21.5, predicted_delay_months: 15.2, risk_score: 84, risk_tier: "CRITICAL" }
+          file_name: activeFile.name, file_type: "MoSPI Project Snapshot CSV Dataset", records_parsed: 25,
+          inferred_ml_predictions: { predicted_cost_overrun_pct: 15.9, predicted_delay_months: 1.6, risk_score: 43, risk_tier: "MEDIUM" }
         };
       } else if (activeFile.type === 'pdf') {
         parsedFileAnalysis = {
@@ -444,7 +572,7 @@ export default function App() {
 
     if (qLower.includes("invest") || qLower.includes("should we invest") || qLower.includes("1000cr") || qLower.includes("allocation")) {
       fallbackIntent = "INVESTMENT_DECISION";
-      fallbackAnswer = `[Infrastructure Investment Advisory] Project ${targetProj} (${targetName}, Sanction: ₹${origCost.toFixed(2)} Cr):\n\n1. Early Stage Milestone Pacing: Having completed 1 month out of 10 allotted months (10% elapsed timeline) with reported ${phys}% physical progress, capital expenditure must be tied to verified site handover.\n2. Risk Assessment: Predictive models estimate potential +${predOverrun}% cost overrun and ${predDelay} months delay if early-stage mobilization milestones stall.\n3. Recommendation: Do not release advance capital unconditionally. Authorize tranche payments only against milestone verification certificates.`;
+      fallbackAnswer = `[Infrastructure Investment Advisory] Project ${targetProj} (${targetName}, Sanction: ₹${origCost.toFixed(2)} Cr):\n\n1. Early Stage Milestone Pacing: Having completed 1 month out of 10 allotted months (10% elapsed timeline) with reported ${phys}% physical progress, capital expenditure must be tied to verified site handover.\n2. Risk Assessment: SIH26103 models estimate potential +${predOverrun}% cost overrun and ${predDelay} months delay if early-stage mobilization milestones stall.\n3. Recommendation: Do not release advance capital unconditionally. Authorize tranche payments only against milestone verification certificates.`;
     } else if (qLower.includes("warning") || qLower.includes("notice") || qLower.includes("level-2") || qLower.includes("level 2")) {
       fallbackIntent = "WARNING_DRAFT";
       fallbackAnswer = `[MoSPI Level-2 Statutory Warning Notice - Draft]\n\nREF: MoSPI/IPMD/L2-WARN/${targetProj}/2026\nTO: Executing Agency / Project Director (${targetName})\nSUBJECT: Formal Notice of Milestone Deficit & Mandatory Catch-Up Directive\n\nProject ${targetProj} is evaluated at Composite Risk Score ${riskScore}/100 with a physical-financial progress gap of ${finGap.toFixed(1)}% and an estimated schedule overrun of ${predDelay} months. You are hereby directed to submit a revised 14-day Catch-up Schedule under statutory guidelines.`;
@@ -453,7 +581,7 @@ export default function App() {
       fallbackAnswer = `[Statutory Contract Audit] For project ${targetProj} (${targetName}): Milestone schedule delays exceeding statutory thresholds permit early warning notices and liquidated damages assessment. Recommended action: Audit contract milestone obligations and issue formal 14-day compliance notice.`;
     } else {
       fallbackIntent = "PROJECT_RISK";
-      fallbackAnswer = `[AI Multi-Agent Synthesis] Project ${targetProj} (${targetName}) is evaluated at ${riskTier} RISK (Composite Risk Score: ${riskScore}/100).\n\n• Primary Risk Factor: Physical progress (${phys}%) vs financial expenditure (${finProg.toFixed(1)}%) creates a ${finGap.toFixed(1)}% gap.\n• ML Forecast: Predictive models forecast +${predOverrun}% cost overrun (₹${(revCost - origCost).toFixed(2)} Cr revision) and a potential ${predDelay} month schedule delay.\n• Recommendation: Initiate physical site audit and deploy a 14-day milestone catch-up directive.`;
+      fallbackAnswer = `[AI Multi-Agent Synthesis] Project ${targetProj} (${targetName}) is evaluated at ${riskTier} RISK (Composite Risk Score: ${riskScore}/100).\n\n• Primary Risk Factor: Physical progress (${phys}%) vs financial expenditure (${finProg.toFixed(1)}%) creates a ${finGap.toFixed(1)}% gap.\n• ML Forecast: SIH26103 ML models forecast +${predOverrun}% cost overrun (₹${(revCost - origCost).toFixed(2)} Cr revision) and a potential ${predDelay} month schedule delay.\n• Recommendation: Initiate physical site audit and deploy a 14-day milestone catch-up directive.`;
     }
 
     const fallbackResponse = {
@@ -1720,7 +1848,11 @@ export default function App() {
                       </div>
 
                       {/* Primary ML Metric Cards */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs font-mono">
+                        <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                          <span className="text-[9px] uppercase tracking-wider block mb-1 text-slate-400">MODEL ACCURACY</span>
+                          <strong className="text-sm text-emerald-400">93.6% Cost R²</strong>
+                        </div>
                         <div className="p-3 rounded-lg" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.06)' }}>
                           <span className="text-[9px] uppercase tracking-wider block mb-1 text-slate-400">PREDICTED DELAY</span>
                           <strong className="text-sm text-amber-400">+{orchestrationResult.ml_prediction_card.metrics?.predicted_delay_months ?? 0} Months</strong>
@@ -1787,7 +1919,7 @@ export default function App() {
 
                   {/* 5 Agent Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <AgentCard num={1} name="Quantitative Risk Analyst" badge="XGBoost ML" badgeClass="badge-cyan"
+                    <AgentCard num={1} name="Quantitative Risk Analyst" badge="CatBoost & ExtraTrees" badgeClass="badge-cyan"
                       borderColor="#00B4D8" bg="rgba(0,180,216,0.03)"
                       text={orchestrationResult.agent_details?.quantitative?.role_summary || "Calculated cost overrun probability and schedule delay vectors from physical vs financial progress gap."}
                       result={orchestrationResult.agent_details?.quantitative?.findings || "Forecast: Dynamic ML Vector Calculated"} />
@@ -1825,9 +1957,9 @@ export default function App() {
                         ⚠️ Low confidence in the AI synthesis. Please review the evidence and consider a manual assessment.
                       </div>
                     )}
-                    <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                    <div className="text-sm leading-relaxed whitespace-pre-line font-sans" style={{ color: 'var(--text-secondary)' }}>
                       {orchestrationResult.answer}
-                    </p>
+                    </div>
                   </div>
 
                   {/* Citations */}

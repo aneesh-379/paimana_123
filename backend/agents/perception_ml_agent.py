@@ -1,9 +1,9 @@
 """
 Agent I: Perception, Ingestion & ML Prediction Agent (PAIMANA AI)
 Responsible for:
-1. Ingesting user input in any format: Plain Text Query, CSV Dataset/Snapshot, or PDF Contract/Document.
-2. Extracting & normalizing project financial, schedule, and milestone features.
-3. Feeding the normalized data directly into the trained ML Models (RandomForest / XGBoost via RiskEngine).
+1. Ingesting user input in any format: Plain Text Query, CSV Dataset/Snapshot, PDF Contract/Document, or Excel.
+2. Extracting & normalizing project financial, schedule, and milestone features into the 37 features required by SIH26103 ML models.
+3. Feeding the normalized data directly into the trained ML Models (CatBoost & ExtraTrees via RiskEngine).
 4. Returning a neat, structured, and validated ML Model Prediction Card with SHAP risk drivers.
 """
 
@@ -15,7 +15,7 @@ import logging
 import pandas as pd
 from typing import Dict, Any, List, Optional, Union
 
-from backend.app.services.risk_engine import risk_engine
+from backend.app.services.risk_engine import risk_engine, safe_float, safe_int
 from backend.app.services.rag_service import RAGService
 from backend.agents.base_agent import BaseAgent
 from ml.ingestion.data_provenance import EvidenceCategory
@@ -25,13 +25,13 @@ logger = logging.getLogger("PAIMANA.PerceptionMLAgent")
 
 class PerceptionMLAgent(BaseAgent):
     """
-    Agent I: Ingests text, PDF, or CSV and routes to trained ML models to obtain real predictions.
+    Agent I: Ingests text, PDF, or CSV and routes to trained SIH26103 ML models to obtain real predictions.
     """
 
     def __init__(self, rag_service: Optional[RAGService] = None):
         super().__init__(
             name="PerceptionMLAgent",
-            description="Ingests user queries, CSV datasets, or PDF contracts and executes real ML predictive models.",
+            description="Ingests user queries, CSV datasets, or PDF contracts and executes SIH26103 ML predictive models.",
             role="Input Ingestion & ML Prediction Specialist"
         )
         self.rag_service = rag_service or RAGService()
@@ -48,7 +48,9 @@ class PerceptionMLAgent(BaseAgent):
         raw_payload = input_data.get("payload") or input_data.get("query") or input_data.get("message") or ""
         context_project = context.get("project_data", {}) if context else {}
 
-        if input_type == "CSV" or isinstance(raw_payload, pd.DataFrame) or (isinstance(raw_payload, str) and raw_payload.strip().startswith(("project_code,", "sector,", "original_cost,"))):
+        if input_type == "CSV" or isinstance(raw_payload, pd.DataFrame) or (isinstance(raw_payload, str) and (
+            "," in raw_payload[:200] or "\n" in raw_payload[:200] or raw_payload.strip().endswith(".csv")
+        ) and any(k in raw_payload.lower()[:200] for k in ["project", "cost", "sector", "progress", "expenditure"])):
             return self.process_csv_input(raw_payload, context_project)
         elif input_type == "PDF" or (isinstance(raw_payload, str) and raw_payload.lower().endswith(".pdf")):
             return self.process_pdf_input(raw_payload, context_project)
@@ -71,19 +73,28 @@ class PerceptionMLAgent(BaseAgent):
         """
         logger.info(f"PerceptionMLAgent: Processing text query '{query[:60]}...'")
         
-        # 1. Identify referenced project code (e.g. PAIM-619054, PAIM-1042)
-        proj_code = (context_project or {}).get("project_code", "PAIM-619054")
-        matched_code = re.search(r'(PAIM-\d+)', query, re.IGNORECASE)
+        # 1. Identify referenced project code dynamically
+        proj_code = (context_project or {}).get("project_code") or (context_project or {}).get("Project_ID")
+        matched_code = re.search(r'([A-Z]{2,6}-\d+)', query)
         if matched_code:
             proj_code = matched_code.group(1).upper()
+        
+        if not proj_code:
+            # Check if query references a project name in historical dataset
+            hist_match = risk_engine.lookup_project(query)
+            if hist_match:
+                proj_code = str(hist_match.get("project_code") or hist_match.get("Project_ID") or "PROJECT")
 
-        # 2. Look up baseline project data from real dataset or fallback
+        if not proj_code:
+            proj_code = "PROJECT-ACTIVE"
+
+        # 2. Look up baseline project data from real dataset or fallback context
         base_data = risk_engine.lookup_project(proj_code) or (context_project or {}).copy()
         
         # 3. Extract any custom financial parameters from natural language query
         extracted_params = {}
         
-        # Detect cost e.g. "1500 cr", "2000 crore", "cost of 850"
+        # Detect cost e.g. "1500 cr", "2000 crore"
         cost_match = re.search(r'(\d+(?:\.\d+)?)\s*(?:cr|crore|crores)', query, re.IGNORECASE)
         if cost_match:
             parsed_cost = float(cost_match.group(1))
@@ -100,25 +111,25 @@ class PerceptionMLAgent(BaseAgent):
         # Merge extracted overrides into base project data
         final_project_data = {
             "project_code": proj_code,
-            "project_name": base_data.get("project_name", f"Infrastructure Project {proj_code}"),
-            "sector": base_data.get("sector", "Infrastructure & Highways"),
-            "ministry": base_data.get("ministry", "Ministry of Road Transport and Highways"),
-            "implementing_agency": base_data.get("implementing_agency", "NHAI"),
-            "state": base_data.get("state", "National"),
-            "original_cost": float(extracted_params.get("original_cost", base_data.get("original_cost", 1162.76))),
-            "revised_cost": float(extracted_params.get("revised_cost", base_data.get("revised_cost", 1390.0))),
-            "expenditure": float(base_data.get("expenditure", 494.72)),
-            "physical_progress": float(extracted_params.get("physical_progress", base_data.get("physical_progress", 42.5))),
+            "project_name": base_data.get("project_name") or base_data.get("Project_Name") or f"Infrastructure Project {proj_code}",
+            "sector": base_data.get("sector") or base_data.get("Sector") or "Infrastructure",
+            "ministry": base_data.get("ministry") or base_data.get("Ministry") or "Central Infrastructure Sector",
+            "implementing_agency": base_data.get("implementing_agency") or base_data.get("Agency") or "Executing Agency",
+            "state": base_data.get("state") or base_data.get("State") or "National",
+            "original_cost": float(extracted_params.get("original_cost", base_data.get("original_cost") or base_data.get("Original_Cost_Crore") or 1000.0)),
+            "revised_cost": float(extracted_params.get("revised_cost", base_data.get("revised_cost") or base_data.get("Revised_Cost_Crore") or 1000.0)),
+            "expenditure": float(base_data.get("expenditure") or base_data.get("Cumulative_Expenditure_Crore") or 450.0),
+            "physical_progress": float(extracted_params.get("physical_progress", base_data.get("physical_progress") or base_data.get("Physical_Progress_Percent") or 45.0)),
             "snapshot_date": base_data.get("snapshot_date", "2026-01-01")
         }
 
-        # 4. Route directly to the trained ML model
+        # 4. Route directly to SIH26103 ML model
         ml_result = risk_engine.predict_project(final_project_data)
 
         # 5. Build the neat ML Prediction Card
         ml_prediction_card = self._build_ml_card(
             source_type="TEXT_QUERY",
-            input_summary=f"Parsed from text query: '{query}'",
+            input_summary=f"Parsed from query: '{query}'",
             project_data=final_project_data,
             ml_result=ml_result,
             extracted_params=extracted_params
@@ -135,42 +146,54 @@ class PerceptionMLAgent(BaseAgent):
 
     def process_csv_input(self, csv_data: Union[str, pd.DataFrame, bytes], context_project: Dict[str, Any] = None) -> Dict[str, Any]:
         """
-        Parses an uploaded CSV file/string, normalizes headers, and runs all rows or active row through the ML model.
+        Parses an uploaded CSV file/string, normalizes headers, and runs all rows through the SIH26103 ML model.
         """
         logger.info("PerceptionMLAgent: Processing CSV dataset input...")
-        if isinstance(csv_data, pd.DataFrame):
-            df = csv_data
-        elif isinstance(csv_data, bytes):
-            df = pd.read_csv(io.BytesIO(csv_data))
-        elif isinstance(csv_data, str):
-            if os.path.exists(csv_data):
-                df = pd.read_csv(csv_data)
+        try:
+            if isinstance(csv_data, pd.DataFrame):
+                df = csv_data.copy()
+            elif isinstance(csv_data, bytes):
+                df = pd.read_csv(io.BytesIO(csv_data))
+            elif isinstance(csv_data, str):
+                if os.path.exists(csv_data):
+                    df = pd.read_csv(csv_data)
+                else:
+                    df = pd.read_csv(io.StringIO(csv_data))
             else:
-                df = pd.read_csv(io.StringIO(csv_data))
-        else:
+                df = pd.DataFrame([context_project or {}])
+        except Exception as e:
+            logger.error(f"PerceptionMLAgent CSV parsing error: {e}")
             df = pd.DataFrame([context_project or {}])
 
-        # Normalize common MoSPI CSV column names
+        # Normalize headers dynamically
         column_mapping = {
-            "Original Cost": "original_cost", "Original_Cost": "original_cost", "ORIGINAL_COST": "original_cost",
-            "Revised Cost": "revised_cost", "Revised_Cost": "revised_cost", "REVISED_COST": "revised_cost",
-            "Expenditure": "expenditure", "Cumulative Expenditure": "expenditure", "EXPENDITURE": "expenditure",
-            "Physical Progress": "physical_progress", "Physical_Progress": "physical_progress", "PHYSICAL_PROGRESS": "physical_progress",
-            "Project Code": "project_code", "Project_Code": "project_code", "PROJECT_CODE": "project_code", "Project ID": "project_code",
-            "Project Name": "project_name", "PROJECT_NAME": "project_name",
-            "Sector": "sector", "SECTOR": "sector"
+            "Original Cost": "original_cost", "Original_Cost": "original_cost", "ORIGINAL_COST": "original_cost", "Original_Cost_Crore": "original_cost",
+            "Revised Cost": "revised_cost", "Revised_Cost": "revised_cost", "REVISED_COST": "revised_cost", "Revised_Cost_Crore": "revised_cost",
+            "Expenditure": "expenditure", "Cumulative Expenditure": "expenditure", "EXPENDITURE": "expenditure", "Cumulative_Expenditure_Crore": "expenditure",
+            "Physical Progress": "physical_progress", "Physical_Progress": "physical_progress", "PHYSICAL_PROGRESS": "physical_progress", "Physical_Progress_Percent": "physical_progress", "Physical_Progress_Pct": "physical_progress",
+            "Financial Progress": "financial_progress", "Financial_Progress": "financial_progress", "FINANCIAL_PROGRESS": "financial_progress", "Financial_Progress_Percent": "financial_progress", "Financial_Progress_Pct": "financial_progress",
+            "Project Code": "project_code", "Project_Code": "project_code", "PROJECT_CODE": "project_code", "Project ID": "project_code", "Project_ID": "project_code",
+            "Project Name": "project_name", "PROJECT_NAME": "project_name", "Project_Name": "project_name",
+            "Sector": "sector", "SECTOR": "sector", "Ministry": "ministry", "MINISTRY": "ministry", "State": "state", "STATE": "state"
         }
         df = df.rename(columns=column_mapping)
 
-        # Predict all rows via ML model
+        # Ensure project_code column exists if missing
+        if "project_code" not in df.columns:
+            if "project_name" in df.columns:
+                df["project_code"] = df["project_name"].astype(str).str.strip()
+            else:
+                df["project_code"] = [f"CSV-ROW-{i+1}" for i in range(len(df))]
+
+        # Predict all rows via SIH26103 ML model
         predictions = risk_engine.predict_dataframe(df)
         
-        # Take the top/selected project for detailed multi-agent card
+        # Take top project record for detailed multi-agent card
         primary_record = predictions[0] if predictions else risk_engine.predict_project(context_project or {})
         
         ml_prediction_card = self._build_ml_card(
             source_type="CSV_DATASET_UPLOAD",
-            input_summary=f"Ingested CSV with {len(df)} project rows and {len(df.columns)} features.",
+            input_summary=f"Parsed CSV with {len(df)} project rows and {len(df.columns)} columns.",
             project_data=primary_record,
             ml_result=primary_record,
             extracted_params={"rows_count": len(df), "columns": list(df.columns)}
@@ -183,7 +206,7 @@ class PerceptionMLAgent(BaseAgent):
             "project_code": primary_record.get("project_code", "CSV-PROJECT"),
             "project_data": primary_record,
             "total_rows_predicted": len(predictions),
-            "batch_predictions": predictions[:20], # top 20 for preview
+            "batch_predictions": predictions[:25],
             "ml_prediction_card": ml_prediction_card
         }
 
@@ -205,31 +228,36 @@ class PerceptionMLAgent(BaseAgent):
             pdf_text = pdf_path_or_bytes
             citations.append("Contract Document Text Stream")
 
-        # Parse extracted contract figures
+        # Extract figures using regex
         extracted_cost = None
-        cost_match = re.search(r'(?:Contract Price|Sanction Cost|Value|Estimated Cost)[^\d]*(\d+(?:\.\d+)?)\s*(?:Cr|Crore|crores)?', pdf_text, re.IGNORECASE)
+        cost_match = re.search(r'(?:Contract Price|Sanction Cost|Value|Estimated Cost|Original Cost)[^\d]*(\d+(?:\.\d+)?)\s*(?:Cr|Crore|crores)?', pdf_text, re.IGNORECASE)
         if cost_match:
             extracted_cost = float(cost_match.group(1))
 
-        proj_code = (context_project or {}).get("project_code", "PAIM-619054")
+        extracted_prog = None
+        prog_match = re.search(r'(\d+(?:\.\d+)?)\s*%\s*(?:physical\s*)?progress', pdf_text, re.IGNORECASE)
+        if prog_match:
+            extracted_prog = float(prog_match.group(1))
+
+        proj_code = (context_project or {}).get("project_code") or (context_project or {}).get("Project_ID") or "PDF-CONTRACT"
         base_data = risk_engine.lookup_project(proj_code) or (context_project or {}).copy()
 
         project_data = {
             "project_code": proj_code,
-            "project_name": base_data.get("project_name", f"Contract Project {proj_code}"),
-            "sector": base_data.get("sector", "Highways & Infrastructure"),
-            "original_cost": extracted_cost or float(base_data.get("original_cost", 1162.76)),
-            "revised_cost": extracted_cost or float(base_data.get("revised_cost", 1390.0)),
-            "expenditure": float(base_data.get("expenditure", 494.72)),
-            "physical_progress": float(base_data.get("physical_progress", 42.5))
+            "project_name": base_data.get("project_name") or base_data.get("Project_Name") or f"Contract Project {proj_code}",
+            "sector": base_data.get("sector") or base_data.get("Sector") or "Infrastructure",
+            "original_cost": extracted_cost or float(base_data.get("original_cost", 1000.0)),
+            "revised_cost": extracted_cost or float(base_data.get("revised_cost", 1000.0)),
+            "expenditure": float(base_data.get("expenditure", 450.0)),
+            "physical_progress": extracted_prog or float(base_data.get("physical_progress", 45.0))
         }
 
-        # Run real ML model
+        # Run SIH26103 ML model
         ml_result = risk_engine.predict_project(project_data)
 
         ml_prediction_card = self._build_ml_card(
             source_type="PDF_CONTRACT_RAG",
-            input_summary=f"Parsed PDF document ({len(pdf_text.split())} words extracted). Clauses indexed into pgvector RAG.",
+            input_summary=f"Parsed PDF document ({len(pdf_text.split())} words extracted). Clauses indexed into RAG.",
             project_data=project_data,
             ml_result=ml_result,
             extracted_params={"citations": citations, "contract_text_preview": pdf_text[:300]}
@@ -246,10 +274,10 @@ class PerceptionMLAgent(BaseAgent):
         }
 
     def _build_ml_card(self, source_type: str, input_summary: str, project_data: Dict[str, Any], ml_result: Dict[str, Any], extracted_params: Dict[str, Any]) -> Dict[str, Any]:
-        """Formats a clean, comprehensive ML Model Output Card."""
+        """Formats a clean, comprehensive SIH26103 ML Model Output Card."""
         return {
-            "title": "PAIMANA Trained ML Model Output",
-            "model_version": ml_result.get("model_version", "PAIMANA-ML-v2.0-RandomForest-XGBoost"),
+            "title": "PAIMANA SIH26103 Trained ML Model Output",
+            "model_version": ml_result.get("model_version", "SIH26103-Final-CatBoost-ExtraTrees"),
             "ingestion_source": source_type,
             "input_summary": input_summary,
             "project_code": ml_result.get("project_code"),
@@ -273,3 +301,4 @@ class PerceptionMLAgent(BaseAgent):
 
 
 perception_ml_agent = PerceptionMLAgent()
+

@@ -112,7 +112,7 @@ class MLClient:
         response = MLPredictionResponse(
             project_id=project_code,
             prediction_timestamp=time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            model_version=raw_data.get("model_version", "PAIMANA-ML-v2.0-RandomForest-XGBoost"),
+            model_version=raw_data.get("model_version", "SIH26103-Final-CatBoost-ExtraTrees"),
             predicted_cost_overrun=round(max(0.0, cost_val), 2),
             predicted_delay_months=round(max(0.0, delay_val), 1),
             predicted_additional_cost_cr=round(add_cost, 2),
@@ -133,14 +133,14 @@ class MLClient:
             "status": "HEALTHY",
             "service_url": self.service_url,
             "timeout_sec": self.timeout,
-            "model_version": "PAIMANA-ML-v2.0-RandomForest-XGBoost",
-            "models_loaded": risk_engine.model_delay is not None,
+            "model_version": "SIH26103-Final-CatBoost-ExtraTrees",
+            "models_loaded": risk_engine.sih_cost_clf is not None,
             "active": True
         }
 
     def getModelMetadata(self) -> Dict[str, Any]:
         return {
-            "model_family": "Random Forest + XGBoost Multi-Target Regressors & Classifiers",
+            "model_family": "SIH26103 CatBoost Classifiers & ExtraTrees Regressor Ensemble",
             "features_count": 28,
             "training_period": "2001-2026 MoSPI Infrastructure Archive",
             "accuracy_metrics": {

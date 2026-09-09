@@ -56,8 +56,10 @@ class BottleneckDiagnoserAgent(BaseAgent):
         cost_esc_pct = ((rev_cost - orig_cost) / max(1.0, orig_cost)) * 100.0
         progress_lag = max(0.0, 100.0 - phys_prog)
 
-        sector = project_data.get("sector", "Infrastructure & Highways")
-        agency = project_data.get("implementing_agency", "NHAI / Central Agency")
+        from backend.app.services.risk_engine import safe_str
+        agency = safe_str(project_data.get("implementing_agency") or project_data.get("Agency") or project_data.get("agency"), "MoRTH")
+        sec_default = "ROAD TRANSPORT AND HIGHWAYS" if "morth" in agency.lower() or "nhai" in agency.lower() else "Infrastructure & Highways"
+        sector = safe_str(project_data.get("sector") or project_data.get("Sector"), sec_default)
 
         bottlenecks = []
 

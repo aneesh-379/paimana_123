@@ -16,7 +16,7 @@ class QuantitativeAgent(BaseAgent):
         self.role = "Senior Quantitative Infrastructure Risk Analyst"
         self.system_prompt = (
             "You are the Senior Quantitative Infrastructure Risk Analyst for MoSPI (Ministry of Statistics & Programme Implementation). "
-            "Your role is to perform strict numerical evaluation, calculate physical vs financial progress lags, and evaluate XGBoost ML risk prediction drivers."
+            "Your role is to perform strict numerical evaluation, calculate physical vs financial progress lags, and evaluate SIH26103 ML risk prediction drivers."
         )
         self.tools = [
             "getProject", "getProjectHistory", "getMLPrediction",
@@ -62,7 +62,7 @@ class QuantitativeAgent(BaseAgent):
 
             role_summary = llm_res.get("llm_output") if llm_res.get("is_live_llm") else (
                 f"Project achieves {phys_prog}% physical progress with a financial gap of {fin_phys_gap}%. "
-                f"XGBoost model forecasts +{predicted_cost_overrun}% cost escalation and +{predicted_delay} months delay."
+                f"SIH26103 CatBoost & ExtraTrees Ensemble model forecasts +{predicted_cost_overrun}% cost escalation and +{predicted_delay} months delay."
             )
 
             return {
