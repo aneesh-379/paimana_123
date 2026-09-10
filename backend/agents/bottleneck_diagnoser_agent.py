@@ -97,12 +97,7 @@ class BottleneckDiagnoserAgent(BaseAgent):
 
         from backend.agents.llm_provider import GLOBAL_LLM_PROVIDER
         bot_prompt = f"Project in {sector} by {agency}: Physical progress {phys_prog}%, Financial gap {fin_gap}%, Cost revision {cost_esc_pct}%. Bottlenecks: {[b['bottleneck_type'] for b in bottlenecks]}."
-        llm_res = GLOBAL_LLM_PROVIDER.generate_response(
-            system_prompt=self.system_prompt,
-            user_prompt=bot_prompt,
-            evidence_bundle={"bottlenecks": [b['bottleneck_type'] for b in bottlenecks], "phys_prog": phys_prog, "fin_gap": fin_gap},
-            fallback_response={"summary": diagnostic_summary}
-        )
+        llm_res = {}
 
         role_summary = llm_res.get("llm_output") if llm_res.get("is_live_llm") else diagnostic_summary
 

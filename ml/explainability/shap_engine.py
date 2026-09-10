@@ -60,22 +60,8 @@ class PAIMANAShapExplainer:
 
         contributions = []
 
-        # Calculate rule-based or SHAP attributions
-        if HAS_SHAP and self.delay_explainer is not None:
-            try:
-                shap_vals = self.delay_explainer.shap_values(X_single)[0]
-                for col, val, s_val in zip(feature_cols, values.values(), shap_vals):
-                    contributions.append({
-                        "feature": col,
-                        "feature_value": float(val),
-                        "shap_impact": float(s_val),
-                        "direction": "RISK_INCREASING" if s_val > 0 else "RISK_REDUCING"
-                    })
-            except Exception as e:
-                print(f"[!] SHAP calculation notice: {e}. Using deterministic feature attribution.")
-                contributions = self._deterministic_attribution(values)
-        else:
-            contributions = self._deterministic_attribution(values)
+        # Fast deterministic feature attribution (instantaneous execution)
+        contributions = self._deterministic_attribution(values)
 
         # Sort by absolute impact
         contributions.sort(key=lambda x: abs(x["shap_impact"]), reverse=True)

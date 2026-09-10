@@ -143,17 +143,21 @@ class RiskEngine:
         if self.historical_dataset is None or self.historical_dataset.empty:
             return None
 
-        clean_code = str(project_code).strip().upper()
-        # Search project_code / Project_ID / project_name
+        clean_code = str(project_code).strip().upper().replace("PAIM-", "").rstrip(".0")
+        if not clean_code:
+            return None
+
         for col in ["project_code", "Project_ID", "Project_Code", "project_id"]:
             if col in self.historical_dataset.columns:
-                matches = self.historical_dataset[self.historical_dataset[col].astype(str).str.upper() == clean_code]
+                series = self.historical_dataset[col].astype(str).str.strip().str.upper().str.replace("PAIM-", "", regex=False).str.rstrip(".0")
+                matches = self.historical_dataset[series == clean_code]
                 if not matches.empty:
                     return matches.iloc[-1].to_dict()
 
         for col in ["project_name", "Project_Name"]:
             if col in self.historical_dataset.columns:
-                matches = self.historical_dataset[self.historical_dataset[col].astype(str).str.upper().str.contains(clean_code, regex=False)]
+                series = self.historical_dataset[col].astype(str).str.upper()
+                matches = self.historical_dataset[series.str.contains(clean_code, regex=False)]
                 if not matches.empty:
                     return matches.iloc[-1].to_dict()
 
@@ -362,8 +366,8 @@ class RiskEngine:
     def predict_dataframe(self, df: pd.DataFrame) -> List[Dict[str, Any]]:
         """Batch predicts an entire uploaded CSV DataFrame using the trained ML model."""
         results = []
-        for _, row in df.iterrows():
-            record = row.to_dict()
+        records = df.to_dict(orient="records")
+        for record in records:
             results.append(self.predict_project(record))
         return results
 

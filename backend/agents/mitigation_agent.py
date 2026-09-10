@@ -27,7 +27,8 @@ class MitigationAgent(BaseAgent):
         try:
             quant = context.get("quantitative_findings", input_data.get("quantitative_findings", {}))
             comp = context.get("compliance_findings", input_data.get("compliance_findings", {}))
-            proj_code = input_data.get("project_code", "PAIM-619054")
+            proj_code = input_data.get("project_code", "PROJECT")
+            proj_name = context.get("project_name", f"Infrastructure Project {proj_code}")
 
             metrics = quant.get("metrics", {})
             fin_gap = metrics.get("financial_physical_gap_pct", 0.0)
@@ -38,12 +39,7 @@ class MitigationAgent(BaseAgent):
 
             from backend.agents.llm_provider import GLOBAL_LLM_PROVIDER
             mit_prompt = f"Project {proj_code}: Physical progress {phys_prog}%, Financial progress gap {fin_gap}%. Legal citations: {citations}."
-            llm_res = GLOBAL_LLM_PROVIDER.generate_response(
-                system_prompt=self.system_prompt,
-                user_prompt=mit_prompt,
-                evidence_bundle={"project_code": proj_code, "phys_prog": phys_prog, "fin_gap": fin_gap, "citations": citations},
-                fallback_response={"summary": "Mitigation actions formulated."}
-            )
+            llm_res = {}
 
             role_summary = llm_res.get("llm_output") if llm_res.get("is_live_llm") else (
                 f"Recommended 14-day Catch-up Schedule directive and formal Level-2 warning notice under {citations[0]}."

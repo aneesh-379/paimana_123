@@ -334,15 +334,16 @@ class OrchestratorAgent:
             f"Strategic Actions: {mit.get('role_summary', '')}"
         )
 
-        llm_res = GLOBAL_LLM_PROVIDER.generate_response(
-            system_prompt=system_prompt,
-            user_prompt=context_prompt,
-            evidence_bundle={"project_code": proj_code, "metrics": metrics, "citations": citations, "bottlenecks": bot_names},
-            fallback_response={"summary": ""}
-        )
+        # Bypass LLM Provider for instant execution (User requested instantaneous results)
+        # llm_res = GLOBAL_LLM_PROVIDER.generate_response(
+        #     system_prompt=system_prompt,
+        #     user_prompt=context_prompt,
+        #     evidence_bundle={"project_code": proj_code, "metrics": metrics, "citations": citations, "bottlenecks": bot_names},
+        #     fallback_response={"summary": ""}
+        # )
 
-        if llm_res.get("is_live_llm") and llm_res.get("llm_output"):
-            return llm_res.get("llm_output")
+        # if llm_res.get("is_live_llm") and llm_res.get("llm_output"):
+        #     return llm_res.get("llm_output")
 
         # Deterministic rich template response
         return (

@@ -27,7 +27,7 @@ class ComplianceAgent(BaseAgent):
 
     def run(self, input_data: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         try:
-            project_id = input_data.get("project_code", input_data.get("project_id", "PAIM-619054"))
+            project_id = input_data.get("project_code", input_data.get("project_id", "PROJECT"))
             query = input_data.get("query", "What happens if the project is delayed? What is the penalty clause?")
             
             evidence_bundle = self.rag_service.retrieve(project_id=project_id, query=query, top_k=3)
@@ -48,12 +48,7 @@ class ComplianceAgent(BaseAgent):
             
             from backend.agents.llm_provider import GLOBAL_LLM_PROVIDER
             comp_prompt = f"Contract & Statutory Query for {project_id}: '{query}'. Retrieved Clauses: {[c['text'] for c in clauses]}."
-            llm_res = GLOBAL_LLM_PROVIDER.generate_response(
-                system_prompt=self.system_prompt,
-                user_prompt=comp_prompt,
-                evidence_bundle={"project_id": project_id, "clauses": [c.get("clause_section") for c in clauses]},
-                fallback_response={"summary": f"Compliance analysis completed for {project_id} under {primary_citation}."}
-            )
+            llm_res = {}
 
             role_summary = llm_res.get("llm_output") if llm_res.get("is_live_llm") else (
                 f"Audited project {project_id} under statutory rules ({primary_citation}). Progress lags exceeding early warning thresholds warrant mandatory 14-day catch-up directive."

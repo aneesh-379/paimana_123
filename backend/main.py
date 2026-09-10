@@ -7,6 +7,7 @@ CSV ingestion, warning approval workflows, and audit logging.
 
 import re
 import os
+import io
 import uuid
 import time
 import json
@@ -26,6 +27,7 @@ from ml.features.engineer_features import PAIMANAFeatureEngineer
 
 from backend.app.services.ml_client import MLClient, MLPredictionRequest
 from backend.app.services.rag_service import RAGService
+from backend.app.services.risk_engine import risk_engine
 from backend.agents.orchestrator_agent import OrchestratorAgent
 from backend.agents.agent_registry import AGENT_REGISTRY
 from backend.agents.llm_provider import GLOBAL_LLM_PROVIDER
@@ -172,13 +174,13 @@ class AuthLoginRequest(BaseModel):
     role: str = "OFFICER"
 
 class AIQueryRequest(BaseModel):
-    projectId: str = "PAIM-619054"
-    message: str = "Why is this project high risk and what should we do?"
+    projectId: str = ""
+    message: str = "Analyze this project"
     fileType: Optional[str] = None
     fileContent: Optional[str] = None
 
 class DraftWarningRequest(BaseModel):
-    projectId: str = "PAIM-619054"
+    projectId: str = ""
     title: str = "Notice of Milestone Delay"
     recipient: str = "Project Director, NHAI"
     reason: str = "Physical progress lag exceeding 15%"
@@ -436,33 +438,58 @@ def get_project_documents(project_id: str):
 def query_ai_orchestrator(req: AIQueryRequest):
     proj_code = req.projectId
     
-    # Extract explicit project identifier from user message if available
-    matched_code = re.search(r'([A-Z]{2,6}-\d+)', req.message)
+    # Extract explicit project identifier (PAIM-XXXXXX or numeric IDs like 709850) from user message
+    matched_code = re.search(r'([A-Z]{2,6}-\d+|\b\d{4,8}\b)', req.message)
     if matched_code:
         proj_code = matched_code.group(1).upper()
 
     proj_record = {}
-    if REAL_DATASET is not None and not REAL_DATASET.empty:
-        if proj_code and proj_code != "PAIM-619054":
-            match = REAL_DATASET[REAL_DATASET["project_code"].astype(str).str.upper() == str(proj_code).upper()]
-            if not match.empty:
-                proj_record = match.iloc[0].to_dict()
-        
-        if not proj_record:
-            for idx, r in REAL_DATASET.iterrows():
-                pname = str(r.get("project_name", "")).lower()
-                pcode = str(r.get("project_code", "")).lower()
-                if (pname and any(k in req.message.lower() for k in pname.split() if len(k) > 4)) or (pcode and pcode in req.message.lower()):
-                    proj_record = r.to_dict()
-                    proj_code = proj_record["project_code"]
-                    break
+
+    # If CSV file content provided, attempt to parse the row directly
+    if req.fileContent and ("," in req.fileContent[:300] or "\n" in req.fileContent[:300]):
+        try:
+            df_inline = pd.read_csv(io.StringIO(req.fileContent), low_memory=False)
+            col_map = {
+                "Original Cost": "original_cost", "Original_Cost": "original_cost", "Original_Cost_Crore": "original_cost",
+                "Revised Cost": "revised_cost", "Revised_Cost": "revised_cost", "Revised_Cost_Crore": "revised_cost",
+                "Expenditure": "expenditure", "Cumulative Expenditure": "expenditure", "Cumulative_Expenditure_Crore": "expenditure", "Cumulative_Exp": "expenditure",
+                "Physical Progress": "physical_progress", "Physical_Progress": "physical_progress", "Physical_Progress_Percent": "physical_progress",
+                "Financial Progress": "financial_progress", "Financial_Progress": "financial_progress", "Financial_Progress_Percent": "financial_progress",
+                "Project Code": "project_code", "Project_Code": "project_code", "Project ID": "project_code", "Project_ID": "project_code",
+                "Project Name": "project_name", "Project_Name": "project_name"
+            }
+            df_inline = df_inline.rename(columns=col_map)
+            if not df_inline.empty:
+                proj_record = df_inline.iloc[0].to_dict()
+                if "project_code" in proj_record:
+                    proj_code = str(proj_record["project_code"]).strip()
+                elif "Project ID" in proj_record:
+                    proj_code = str(proj_record["Project ID"]).strip()
+        except Exception as e:
+            print(f"Error parsing inline CSV content: {e}")
 
     if not proj_record and proj_code:
         proj_record = risk_engine.lookup_project(proj_code) or {}
 
-    if not proj_record and REAL_DATASET is not None and not REAL_DATASET.empty:
-        proj_record = REAL_DATASET.iloc[0].to_dict()
-        proj_code = proj_record.get("project_code", "PROJECT-1")
+    if not proj_record and REAL_DATASET is not None and not REAL_DATASET.empty and proj_code:
+        clean_target = str(proj_code).strip().upper().replace("PAIM-", "")
+        if clean_target:
+            if "project_code" in REAL_DATASET.columns:
+                codes = REAL_DATASET["project_code"].astype(str).str.strip().str.upper().str.replace("PAIM-", "", regex=False)
+                matches = REAL_DATASET[codes == clean_target]
+                if not matches.empty:
+                    proj_record = matches.iloc[0].to_dict()
+                    proj_code = proj_record.get("project_code", proj_code)
+
+            if not proj_record and "project_name" in REAL_DATASET.columns and len(clean_target) >= 4:
+                names = REAL_DATASET["project_name"].astype(str).str.lower()
+                matches = REAL_DATASET[names.str.contains(clean_target.lower(), regex=False, na=False)]
+                if not matches.empty:
+                    proj_record = matches.iloc[0].to_dict()
+                    proj_code = proj_record.get("project_code", proj_code)
+
+    if not proj_record and proj_code:
+        proj_record = {"project_code": proj_code, "project_name": "Custom Project Upload"}
 
     input_type = req.fileType.upper() if req.fileType else "TEXT"
     if req.fileContent and ("," in req.fileContent[:200] or "\n" in req.fileContent[:200]):

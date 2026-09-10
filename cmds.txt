@@ -1,0 +1,13 @@
+go to the path 103 folder   in downloads then foloowthe 3 cmds down as it is
+
+backend:
+python -m backend.main  
+
+uvicorn: 
+
+uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+
+frontend:
+
+cd frontend
+npm run dev
