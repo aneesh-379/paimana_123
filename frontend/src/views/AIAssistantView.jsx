@@ -196,6 +196,26 @@ export default function AIAssistantView({
         </div>
       )}
 
+      {/* Initial Multi-Agent System Architecture & Interactive Exploration */}
+      {!orchestrationResult && !chatLoading && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <span className="font-mono text-xs text-slate-500 font-semibold uppercase tracking-wider flex items-center gap-1.5">
+              <BrainCircuit className="w-3.5 h-3.5 text-purple-700" />
+              Autonomous Multi-Agent System Pipeline
+            </span>
+            <Badge variant="purple">Click any node to inspect agent reasoning</Badge>
+          </div>
+          <AgentFlowDAG
+            confidence={0.97}
+            agentDetails={null}
+            selectedProject={selectedProject}
+            ragResults={ragResults}
+            onApproveNotice={handleApproveNotice}
+          />
+        </div>
+      )}
+
       {/* Orchestration Results Display */}
       {orchestrationResult && (
         <div className="space-y-5 animate-slide-up">
@@ -212,6 +232,10 @@ export default function AIAssistantView({
             confidence={orchestrationResult.confidence || 0.97}
             agentDetails={orchestrationResult.agent_details}
             agentsUsed={orchestrationResult.agents_used}
+            orchestrationResult={orchestrationResult}
+            selectedProject={selectedProject}
+            ragResults={ragResults}
+            onApproveNotice={handleApproveNotice}
           />
 
           {/* AI Synthesis Box with Structured Markdown Rendering */}

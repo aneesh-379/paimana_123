@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
+import Card3D from '../components/common/Card3D';
+import RiskGauge3D from '../components/visualizers/RiskGauge3D';
 
 export default function PredictiveView() {
   const [simOriginalCost, setSimOriginalCost] = useState(1200);
@@ -58,9 +60,13 @@ export default function PredictiveView() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Parameter Controls (5 cols) */}
-        <div className="lg:col-span-5 cockpit-card bg-white p-5 space-y-5 border border-slate-200 shadow-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Parameter Controls (5 cols, 3D Interactive) */}
+        <Card3D
+          tiltDegree={4}
+          glowColor="rgba(124, 58, 237, 0.2)"
+          className="lg:col-span-5 cockpit-card bg-white p-5 space-y-5 border border-slate-200 shadow-sm"
+        >
           <div className="pb-3 border-b border-slate-100 flex justify-between items-center">
             <h3 className="font-sans font-bold text-sm text-slate-900 flex items-center gap-2">
               <Sliders className="w-4 h-4 text-purple-700" />
@@ -104,28 +110,28 @@ export default function PredictiveView() {
               />
             </div>
 
-            {/* Financial Spent */}
+            {/* Financial Disbursement */}
             <div>
               <div className="flex justify-between font-mono mb-1.5">
-                <span className="text-slate-600">Financial Disbursement Ratio</span>
-                <strong className="text-amber-700">{simExpPct}%</strong>
+                <span className="text-slate-600">Disbursed Expenditure</span>
+                <strong className="text-purple-700">{simExpPct}%</strong>
               </div>
               <input
                 type="range"
                 min="5"
-                max="95"
+                max="100"
                 step="1"
                 value={simExpPct}
                 onChange={(e) => setSimExpPct(Number(e.target.value))}
-                className="w-full accent-amber-600"
+                className="w-full accent-purple-600"
               />
             </div>
 
             {/* Elapsed Timeline */}
             <div>
               <div className="flex justify-between font-mono mb-1.5">
-                <span className="text-slate-600">Elapsed Construction Timeline</span>
-                <strong className="text-slate-900">{simElapsedMonths} Months</strong>
+                <span className="text-slate-600">Months Elapsed</span>
+                <strong className="text-slate-800">{simElapsedMonths} Months</strong>
               </div>
               <input
                 type="range"
@@ -134,14 +140,14 @@ export default function PredictiveView() {
                 step="1"
                 value={simElapsedMonths}
                 onChange={(e) => setSimElapsedMonths(Number(e.target.value))}
-                className="w-full accent-slate-600"
+                className="w-full accent-slate-700"
               />
             </div>
 
-            {/* Clearance Status */}
+            {/* Statutory Clearances */}
             <div>
-              <label className="text-slate-600 font-mono text-[10px] uppercase block mb-1.5 font-semibold">
-                Statutory Clearances (Land &amp; Forest RoW)
+              <label className="text-slate-600 block mb-1.5 font-mono">
+                Statutory RoW &amp; Environmental Clearance Status
               </label>
               <select
                 value={simClearanceStatus}
@@ -153,13 +159,26 @@ export default function PredictiveView() {
               </select>
             </div>
           </div>
-        </div>
+        </Card3D>
 
         {/* Model Prediction Outputs (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
+          {/* 3D Volumetric Risk Gauge Component */}
+          <RiskGauge3D
+            score={riskScore}
+            confidence={0.948}
+            tier={riskTier}
+            overrunPct={costOverrun}
+            delayMonths={timeDelay}
+          />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Cost Overrun Outcome (A) */}
-            <div className="cockpit-card bg-rose-50/70 p-5 space-y-3 border border-rose-200 shadow-sm">
+            <Card3D
+              tiltDegree={5}
+              glowColor="rgba(244, 63, 94, 0.25)"
+              className="cockpit-card bg-rose-50/70 p-5 space-y-3 border border-rose-200 shadow-sm"
+            >
               <div className="flex justify-between items-center pb-2 border-b border-rose-200/80">
                 <span className="font-mono text-[10px] uppercase tracking-wider text-rose-800 font-bold">
                   OUTCOME (A): COST OVERRUN
@@ -184,10 +203,14 @@ export default function PredictiveView() {
                   <strong className="text-rose-800">₹{predictedFinalCost} Cr</strong>
                 </div>
               </div>
-            </div>
+            </Card3D>
 
             {/* Time Delay Outcome (B) */}
-            <div className="cockpit-card bg-purple-50/70 p-5 space-y-3 border border-purple-200 shadow-sm">
+            <Card3D
+              tiltDegree={5}
+              glowColor="rgba(124, 58, 237, 0.25)"
+              className="cockpit-card bg-purple-50/70 p-5 space-y-3 border border-purple-200 shadow-sm"
+            >
               <div className="flex justify-between items-center pb-2 border-b border-purple-200/80">
                 <span className="font-mono text-[10px] uppercase tracking-wider text-purple-800 font-bold">
                   OUTCOME (B): TIME DELAY
@@ -214,11 +237,15 @@ export default function PredictiveView() {
                   <span className="text-slate-800 font-semibold">Extended +{timeDelay} Months</span>
                 </div>
               </div>
-            </div>
+            </Card3D>
           </div>
 
           {/* Root SHAP Feature Attribution Breakdown */}
-          <div className="cockpit-card bg-white p-5 space-y-3 border border-slate-200 shadow-sm">
+          <Card3D
+            tiltDegree={4}
+            glowColor="rgba(124, 58, 237, 0.2)"
+            className="cockpit-card bg-white p-5 space-y-3 border border-slate-200 shadow-sm"
+          >
             <div className="flex justify-between items-center pb-2 border-b border-slate-100">
               <span className="font-sans font-bold text-xs text-slate-900">
                 Model Feature Contribution &amp; Variance Breakdown (SHAP Values)
@@ -257,7 +284,7 @@ export default function PredictiveView() {
                 </div>
               </div>
             </div>
-          </div>
+          </Card3D>
         </div>
       </div>
     </div>

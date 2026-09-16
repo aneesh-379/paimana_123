@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+pyjwt
+pydantic
+jinja2
+faiss-cpu
+numpy
+jsonschema
+networkx
+pyyaml
+prometheus-client
+structlog
+opentelemetry-sdk
+opentelemetry-exporter-jaeger
+requests
+cryptography
+# (plus any optional ML libs you chose, e.g. scikit-learn)

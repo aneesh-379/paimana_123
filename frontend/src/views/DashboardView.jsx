@@ -14,7 +14,12 @@ import {
   Search,
   Upload,
   FileSpreadsheet,
-  ArrowRight
+  ArrowRight,
+  Globe,
+  Compass,
+  Sparkles,
+  Orbit,
+  Layers
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -28,6 +33,10 @@ import {
 } from 'recharts';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
+import Card3D from '../components/common/Card3D';
+import RiskGauge3D from '../components/visualizers/RiskGauge3D';
+import MetricCube3D from '../components/common/MetricCube3D';
+import SpatialRadar3D from '../components/visualizers/SpatialRadar3D';
 import ProjectTable from '../components/projects/ProjectTable';
 import { MOSPI_STATS, SECTOR_METRICS_DATA, ESCALATION_DRIVERS_DATA } from '../data/mospiConstants';
 import { getValue } from '../data/mockProjects';
@@ -69,10 +78,10 @@ export default function DashboardView({
           <div className="lg:col-span-8 space-y-4">
             {/* Contextual Badges */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200/80">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200/80 shadow-2xs">
                 National Infrastructure AI Cockpit
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-soft-pulse" />
                 Live Intelligence Stream
               </span>
@@ -95,7 +104,7 @@ export default function DashboardView({
                 variant="primary"
                 size="md"
                 onClick={() => onTriggerQuickAI("Why is Greenfield Expressway Expansion (PAIM-619054) flagged high risk?")}
-                className="font-semibold text-xs px-4 py-2 shadow-sm"
+                className="font-semibold text-xs px-4 py-2 shadow-sm hover:-translate-y-0.5 active:translate-y-0 transition-transform"
               >
                 Inspect Critical Registry
               </Button>
@@ -103,7 +112,7 @@ export default function DashboardView({
                 variant="ghost"
                 size="md"
                 onClick={onOpenSimulator}
-                className="btn-secondary-lavender font-semibold text-xs px-4 py-2"
+                className="btn-secondary-lavender font-semibold text-xs px-4 py-2 hover:-translate-y-0.5 active:translate-y-0 transition-transform"
               >
                 Test What-If Sandbox
               </Button>
@@ -111,65 +120,69 @@ export default function DashboardView({
                 variant="ghost"
                 size="md"
                 onClick={() => onTriggerQuickAI("Generate MoSPI Level-2 statutory warning notice for PAIM-619054")}
-                className="text-xs px-3.5 py-2 font-medium"
+                className="text-xs px-3.5 py-2 font-medium hover:-translate-y-0.5 active:translate-y-0 transition-transform"
               >
                 Statutory Notice Draft
               </Button>
             </div>
           </div>
 
-          {/* Right Column: CRITICAL RISK WATCHLIST Panel */}
-          <div className="lg:col-span-4">
-            <div className="bg-[#FFF1F2] border border-[#FECDD3] rounded-xl p-5 sm:p-6 shadow-sm space-y-3">
+          {/* Right Column: 3D Volumetric Risk Gauge & Watchlist Card */}
+          <div className="lg:col-span-4 space-y-3">
+            <RiskGauge3D
+              score={84}
+              confidence={0.97}
+              tier="CRITICAL TIER 1"
+              overrunPct={19.5}
+              delayMonths={16.5}
+              onInspect={() => onTriggerQuickAI("Why is Greenfield Expressway Expansion (PAIM-619054) flagged high risk?")}
+            />
+
+            <Card3D
+              tiltDegree={5}
+              glowColor="rgba(244, 63, 94, 0.25)"
+              className="bg-gradient-to-b from-[#FFF1F2] to-[#FFE4E6] border border-[#FECDD3] rounded-xl p-4 shadow-sm space-y-2.5"
+            >
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
-                  <ShieldAlert className="w-4 h-4 text-rose-600" />
+                <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
+                  <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
                   CRITICAL RISK WATCHLIST
                 </span>
-                <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-rose-100/80 text-rose-800 border border-rose-200">
-                  TIER 1
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-rose-200/90 text-rose-800 border border-rose-300 shadow-2xs">
+                  342 PROJECTS
                 </span>
               </div>
 
-              <div>
-                <span className="font-mono text-5xl font-extrabold text-rose-800 tracking-tight block">
-                  342
-                </span>
-                <span className="text-xs font-medium text-rose-600 block mt-1">
-                  Projects · Cost Escalation &gt;15%
-                </span>
-              </div>
-
-              <div className="pt-3 border-t border-rose-200/80 space-y-1.5 text-xs font-mono text-slate-700">
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500">Delay Slippage &gt;90d:</span>
-                  <strong className="text-slate-800">814 Projects</strong>
+              <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                <div className="bg-white/80 p-2 rounded-lg border border-rose-200/80">
+                  <span className="text-slate-500 block text-[10px]">Delay &gt;90d:</span>
+                  <strong className="text-slate-800 text-xs">814 Projects</strong>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500">Sanctioned Outlay:</span>
-                  <strong className="text-slate-800">₹37.13 L Cr</strong>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500">Net Escalation:</span>
-                  <strong className="text-rose-700 font-bold">+₹5.65 L Cr (+15.2%)</strong>
+                <div className="bg-white/80 p-2 rounded-lg border border-rose-200/80">
+                  <span className="text-slate-500 block text-[10px]">Net Escalation:</span>
+                  <strong className="text-rose-700 text-xs">+₹5.65 L Cr</strong>
                 </div>
               </div>
-            </div>
+            </Card3D>
           </div>
         </div>
       </div>
 
       {/* ============================================================
-          2. SYSTEM STATUS ROW (4 Horizontal Panels matching Reference)
+          2. SYSTEM STATUS ROW (4 3D Interactive Horizontal Panels)
           ============================================================ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Panel 1: Data Pipeline */}
-        <div className="bg-emerald-50/70 border border-emerald-200/70 rounded-xl p-4 shadow-sm space-y-1.5">
+        <Card3D
+          tiltDegree={6}
+          glowColor="rgba(16, 185, 129, 0.3)"
+          className="bg-gradient-to-b from-emerald-50/90 to-white border border-emerald-200/80 rounded-xl p-4 shadow-sm space-y-1.5"
+        >
           <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-700 block">
             DATA PIPELINE
           </span>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-soft-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-soft-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
             <span className="font-sans font-bold text-sm text-emerald-900">
               OPERATIONAL
             </span>
@@ -177,25 +190,33 @@ export default function DashboardView({
           <span className="text-[11px] font-mono text-emerald-700/80 block">
             1,981 Projects Stream Active
           </span>
-        </div>
+        </Card3D>
 
         {/* Panel 2: Prediction Engine */}
-        <div className="bg-purple-50/70 border border-purple-200/70 rounded-xl p-4 shadow-sm space-y-1.5">
+        <Card3D
+          tiltDegree={6}
+          glowColor="rgba(124, 58, 237, 0.3)"
+          className="bg-gradient-to-b from-purple-50/90 to-white border border-purple-200/80 rounded-xl p-4 shadow-sm space-y-1.5"
+        >
           <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-purple-700 block">
             PREDICTION ENGINE
           </span>
           <div className="flex items-center gap-2">
             <span className="font-sans font-bold text-sm text-purple-900">
-              XGBOOST V2.4
+              CATBOOST V1.2
             </span>
           </div>
           <span className="text-[11px] font-mono text-purple-700/80 block">
             Random Forest v1.8 Cohort
           </span>
-        </div>
+        </Card3D>
 
         {/* Panel 3: RAG Vector Store */}
-        <div className="bg-sky-50/70 border border-sky-200/70 rounded-xl p-4 shadow-sm space-y-1.5">
+        <Card3D
+          tiltDegree={6}
+          glowColor="rgba(14, 165, 233, 0.3)"
+          className="bg-gradient-to-b from-sky-50/90 to-white border border-sky-200/80 rounded-xl p-4 shadow-sm space-y-1.5"
+        >
           <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-sky-700 block">
             RAG VECTOR STORE
           </span>
@@ -205,12 +226,16 @@ export default function DashboardView({
             </span>
           </div>
           <span className="text-[11px] font-mono text-sky-700/80 block">
-            GCC & MoSPI Corpus Indexed
+            GCC &amp; MoSPI Corpus Indexed
           </span>
-        </div>
+        </Card3D>
 
         {/* Panel 4: Governance Gate */}
-        <div className="bg-amber-50/70 border border-amber-200/70 rounded-xl p-4 shadow-sm space-y-1.5">
+        <Card3D
+          tiltDegree={6}
+          glowColor="rgba(245, 158, 11, 0.3)"
+          className="bg-gradient-to-b from-amber-50/90 to-white border border-amber-200/80 rounded-xl p-4 shadow-sm space-y-1.5"
+        >
           <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-amber-700 block">
             GOVERNANCE GATE
           </span>
@@ -222,13 +247,36 @@ export default function DashboardView({
           <span className="text-[11px] font-mono text-amber-700/80 block">
             Section 23 Audit Trail
           </span>
+        </Card3D>
+      </div>
+
+      {/* ============================================================
+          2.5. 3D SPATIAL INTELLIGENCE & VOLUMETRIC METRIC DECK
+          ============================================================ */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Metric Cube 3D (5 cols) */}
+        <div className="lg:col-span-5 flex flex-col">
+          <MetricCube3D />
+        </div>
+
+        {/* Spatial Radar 3D (7 cols) */}
+        <div className="lg:col-span-7 flex flex-col">
+          <SpatialRadar3D
+            onSelectProject={(proj) => {
+              if (onSelectProject) onSelectProject(proj);
+            }}
+          />
         </div>
       </div>
 
       {/* ============================================================
-          3. AI ASSISTANT & FILE INGESTION PANEL (Matching Reference)
+          3. AI ASSISTANT & FILE INGESTION PANEL (3D Elevated)
           ============================================================ */}
-      <div className="cockpit-card bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+      <Card3D
+        tiltDegree={3}
+        glowColor="rgba(124, 58, 237, 0.18)"
+        className="cockpit-card bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4"
+      >
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-3 border-b border-slate-100">
           <div>
             <h3 className="font-sans font-bold text-base text-slate-900 flex items-center gap-2">
@@ -288,7 +336,7 @@ export default function DashboardView({
             </Button>
           </div>
         </form>
-      </div>
+      </Card3D>
 
       {/* ============================================================
           4. ASYMMETRIC CONTROL ROOM: IMMEDIATE ATTENTION & REVIEWS (8 cols) + CHARTS (4 cols)
@@ -415,7 +463,11 @@ export default function DashboardView({
         {/* Right Column (4 cols): Capital Allocation Bar Chart & Pareto Drivers */}
         <div className="lg:col-span-4 space-y-6">
           {/* Sector Capital Outlay Chart */}
-          <div className="cockpit-card bg-white p-5 space-y-4">
+          <Card3D
+            tiltDegree={4}
+            glowColor="rgba(124, 58, 237, 0.2)"
+            className="cockpit-card bg-white p-5 space-y-4 shadow-sm"
+          >
             <div className="flex justify-between items-center pb-3 border-b border-slate-100">
               <div>
                 <h4 className="font-sans font-bold text-xs text-slate-900">
@@ -470,10 +522,14 @@ export default function DashboardView({
                 Anticipated Outlay
               </span>
             </div>
-          </div>
+          </Card3D>
 
           {/* Root Cause Escalation Drivers (Pareto) */}
-          <div className="cockpit-card bg-white p-5 space-y-4">
+          <Card3D
+            tiltDegree={4}
+            glowColor="rgba(245, 158, 11, 0.2)"
+            className="cockpit-card bg-white p-5 space-y-4 shadow-sm"
+          >
             <div className="flex justify-between items-center pb-3 border-b border-slate-100">
               <h4 className="font-sans font-bold text-xs text-slate-900">
                 Top Escalation Root Drivers
@@ -509,10 +565,14 @@ export default function DashboardView({
               <span>Primary Factor:</span>
               <strong className="text-rose-700">Land RoW Clearance (34%)</strong>
             </div>
-          </div>
+          </Card3D>
 
           {/* Recent Directives Feed */}
-          <div className="cockpit-card bg-white p-5 space-y-3">
+          <Card3D
+            tiltDegree={4}
+            glowColor="rgba(14, 165, 233, 0.2)"
+            className="cockpit-card bg-white p-5 space-y-3 shadow-sm"
+          >
             <div className="flex justify-between items-center pb-2 border-b border-slate-100">
               <span className="font-sans font-bold text-xs text-slate-900">
                 Recent Directives &amp; Supervisory Findings
@@ -559,7 +619,7 @@ export default function DashboardView({
                 </div>
               </div>
             </div>
-          </div>
+          </Card3D>
         </div>
       </div>
     </div>

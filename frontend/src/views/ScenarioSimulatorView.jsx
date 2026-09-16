@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Sliders, RotateCcw, Play, CheckCircle, TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
+import { Sliders, RotateCcw, Play, CheckCircle, TrendingUp, TrendingDown, ArrowRight, Zap, Sparkles } from 'lucide-react';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
+import Card3D from '../components/common/Card3D';
+import TrajectoryHorizon3D from '../components/visualizers/TrajectoryHorizon3D';
 
 export default function ScenarioSimulatorView() {
   // Baseline Parameters
@@ -59,34 +61,41 @@ export default function ScenarioSimulatorView() {
             Infrastructure Scenario Simulation Sandbox (What-If)
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            Simulate macroeconomic shocks, statutory acceleration, and contractor liquidity interventions to evaluate risk mitigation pathways.
+            Simulate policy interventions, supply-chain shocks, and Right-of-Way acceleration on capital outlay and completion dates.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" icon={RotateCcw} onClick={handleReset} className="shadow-sm">
+          <Button variant="ghost" size="sm" icon={RotateCcw} onClick={handleReset} className="shadow-2xs bg-white border border-slate-200">
             Reset to Baseline
           </Button>
-          <Badge variant="purple">Target: Active Infrastructure Simulation</Badge>
+          <Badge variant="purple" className="shadow-2xs">Target: Active Infrastructure Simulation</Badge>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Scenario Controls (5 cols) */}
-        <div className="lg:col-span-5 cockpit-card bg-white p-5 space-y-4 border border-slate-200 shadow-sm">
-          <div className="pb-3 border-b border-slate-100">
-            <h3 className="font-sans font-bold text-sm text-slate-900">
-              Simulation Shock &amp; Policy Lever Controls
-            </h3>
-            <p className="text-[11px] text-slate-500">
-              Adjust variables to test project sensitivity.
-            </p>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Scenario Controls (5 cols, 3D Interactive) */}
+        <Card3D
+          tiltDegree={4}
+          glowColor="rgba(124, 58, 237, 0.2)"
+          className="lg:col-span-5 cockpit-card bg-white p-5 space-y-4 border border-slate-200 shadow-sm"
+        >
+          <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
+            <div>
+              <h3 className="font-sans font-bold text-sm text-slate-900">
+                Simulation Shock &amp; Policy Lever Controls
+              </h3>
+              <p className="text-[11px] text-slate-500">
+                Adjust variables in real-time to test project sensitivity.
+              </p>
+            </div>
+            <Sparkles className="w-4 h-4 text-purple-600" />
           </div>
 
           <div className="space-y-4 text-xs font-sans">
             {/* Raw Material Inflation */}
-            <div>
-              <div className="flex justify-between font-mono mb-1.5">
-                <span className="text-slate-700">Steel &amp; Cement Inflation Shock</span>
+            <div className="p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-1.5 shadow-2xs">
+              <div className="flex justify-between font-mono">
+                <span className="text-slate-700 font-semibold">Steel &amp; Cement Inflation Shock</span>
                 <strong className={materialInflation > 0 ? 'text-rose-700 font-bold' : 'text-slate-700'}>
                   +{materialInflation}%
                 </strong>
@@ -98,14 +107,14 @@ export default function ScenarioSimulatorView() {
                 step="1"
                 value={materialInflation}
                 onChange={(e) => setMaterialInflation(Number(e.target.value))}
-                className="w-full accent-rose-600"
+                className="w-full accent-rose-600 cursor-pointer"
               />
             </div>
 
             {/* Land Handover Adjustment */}
-            <div>
-              <div className="flex justify-between font-mono mb-1.5">
-                <span className="text-slate-700">Land &amp; RoW Handover Shift</span>
+            <div className="p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-1.5 shadow-2xs">
+              <div className="flex justify-between font-mono">
+                <span className="text-slate-700 font-semibold">Land &amp; RoW Handover Shift</span>
                 <strong className={landClearanceSpeed < 0 ? 'text-emerald-700 font-bold' : landClearanceSpeed > 0 ? 'text-rose-700 font-bold' : 'text-slate-700'}>
                   {landClearanceSpeed < 0 ? `${landClearanceSpeed} Mo (Expedited)` : landClearanceSpeed > 0 ? `+${landClearanceSpeed} Mo (Delayed)` : '0 Mo (Baseline)'}
                 </strong>
@@ -117,14 +126,14 @@ export default function ScenarioSimulatorView() {
                 step="1"
                 value={landClearanceSpeed}
                 onChange={(e) => setLandClearanceSpeed(Number(e.target.value))}
-                className="w-full accent-purple-600"
+                className="w-full accent-purple-600 cursor-pointer"
               />
             </div>
 
             {/* Weather Delay Buffer */}
-            <div>
-              <div className="flex justify-between font-mono mb-1.5">
-                <span className="text-slate-700">Monsoon Weather Stoppage Buffer</span>
+            <div className="p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-1.5 shadow-2xs">
+              <div className="flex justify-between font-mono">
+                <span className="text-slate-700 font-semibold">Monsoon Weather Stoppage Buffer</span>
                 <strong className="text-amber-700 font-bold">+{weatherBufferDays} Days</strong>
               </div>
               <input
@@ -134,21 +143,21 @@ export default function ScenarioSimulatorView() {
                 step="5"
                 value={weatherBufferDays}
                 onChange={(e) => setWeatherBufferDays(Number(e.target.value))}
-                className="w-full accent-amber-600"
+                className="w-full accent-amber-600 cursor-pointer"
               />
             </div>
 
             {/* Contractor Liquidity Intervention */}
-            <div className="pt-3 border-t border-slate-100">
-              <label className="flex items-center gap-3 cursor-pointer select-none">
+            <div className="pt-2">
+              <label className="flex items-center gap-3 p-3 rounded-xl bg-purple-50/60 border border-purple-200/70 cursor-pointer select-none hover:bg-purple-50 transition-colors shadow-2xs">
                 <input
                   type="checkbox"
                   checked={contractorSupport}
                   onChange={(e) => setContractorSupport(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500"
+                  className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer"
                 />
                 <div>
-                  <span className="text-slate-900 font-medium block text-xs">
+                  <span className="text-slate-900 font-bold block text-xs">
                     Deploy MoSPI Fast-Track Mobilization Advance
                   </span>
                   <span className="text-[11px] text-slate-500 block">
@@ -158,15 +167,49 @@ export default function ScenarioSimulatorView() {
               </label>
             </div>
           </div>
-        </div>
+        </Card3D>
 
-        {/* Baseline vs Scenario Comparison (7 cols) */}
-        <div className="lg:col-span-7 cockpit-card bg-white p-5 space-y-4 border border-slate-200 shadow-sm">
+        {/* Baseline vs Scenario Comparison (7 cols, 3D Interactive) */}
+        <Card3D
+          tiltDegree={4}
+          glowColor="rgba(124, 58, 237, 0.2)"
+          className="lg:col-span-7 cockpit-card bg-white p-5 space-y-4 border border-slate-200 shadow-sm"
+        >
           <div className="pb-3 border-b border-slate-100 flex justify-between items-center">
-            <h3 className="font-sans font-bold text-sm text-slate-900">
-              Comparative Impact Analysis: Baseline vs. Scenario
-            </h3>
-            <Badge variant="purple">Real-Time Simulation</Badge>
+            <div>
+              <h3 className="font-sans font-bold text-sm text-slate-900">
+                Comparative Impact Analysis: Baseline vs. Scenario
+              </h3>
+              <p className="text-[11px] text-slate-500">Live predictive calculations updated dynamically.</p>
+            </div>
+            <Badge variant="purple" className="shadow-2xs">Real-Time Simulation</Badge>
+          </div>
+
+          {/* 4 Quick 3D Live Outcome Tiles */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div className="p-3 rounded-xl bg-rose-50/70 border border-rose-200 space-y-1 shadow-2xs">
+              <span className="font-mono text-[9px] font-bold uppercase text-rose-700 block">Simulated Overrun</span>
+              <strong className="font-mono text-base font-extrabold text-rose-900 block">+{scenarioCostOverrun}%</strong>
+              <span className="text-[10px] font-mono text-rose-700">{parseFloat(costDelta) >= 0 ? `+${costDelta}%` : `${costDelta}%`} var</span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-purple-50/70 border border-purple-200 space-y-1 shadow-2xs">
+              <span className="font-mono text-[9px] font-bold uppercase text-purple-700 block">Simulated Delay</span>
+              <strong className="font-mono text-base font-extrabold text-purple-900 block">+{scenarioDelay} Mo</strong>
+              <span className="text-[10px] font-mono text-purple-700">{parseFloat(delayDelta) >= 0 ? `+${delayDelta} mo` : `${delayDelta} mo`}</span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1 shadow-2xs">
+              <span className="font-mono text-[9px] font-bold uppercase text-amber-700 block">Risk Score</span>
+              <strong className="font-mono text-base font-extrabold text-amber-900 block">{scenarioRiskScore}/100</strong>
+              <span className="text-[10px] font-mono text-amber-700">{riskDelta >= 0 ? `+${riskDelta} pts` : `${riskDelta} pts`}</span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-100/80 border border-slate-200 space-y-1 shadow-2xs">
+              <span className="font-mono text-[9px] font-bold uppercase text-slate-600 block">Projected Outlay</span>
+              <strong className="font-mono text-base font-extrabold text-slate-900 block">₹{scenarioFinalCost} Cr</strong>
+              <span className="text-[10px] font-mono text-slate-600 truncate block">Δ ₹{(parseFloat(scenarioFinalCost) - BASELINE.finalCost).toFixed(1)} Cr</span>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -245,7 +288,20 @@ export default function ScenarioSimulatorView() {
               )}
             </p>
           </div>
-        </div>
+        </Card3D>
+      </div>
+
+      {/* 3D Dynamic Trajectory Horizon Visualizer */}
+      <div className="pt-2">
+        <TrajectoryHorizon3D
+          projectCode="PAIM-619054"
+          projectName="Greenfield Expressway Expansion Package IV"
+          baselineCost={BASELINE.origCost}
+          simulatedCost={parseFloat(scenarioFinalCost)}
+          baselineDelay={BASELINE.delayMonths}
+          simulatedDelay={scenarioDelay}
+          physicalProgress={42.1}
+        />
       </div>
     </div>
   );

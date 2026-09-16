@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
+import Card3D from '../components/common/Card3D';
 import AuditTrailTable from '../components/governance/AuditTrailTable';
 import WarningReviewModal from '../components/governance/WarningReviewModal';
 import { useToast } from '../context/ToastContext';
@@ -89,9 +90,11 @@ export default function GovernanceView({
               const isPending = item.status === 'PENDING_HUMAN_APPROVAL';
 
               return (
-                <div
+                <Card3D
                   key={idx}
-                  className="p-4 rounded-lg bg-slate-50/60 border border-slate-200 space-y-3"
+                  tiltDegree={4}
+                  glowColor={isPending ? 'rgba(245, 158, 11, 0.25)' : 'rgba(16, 185, 129, 0.25)'}
+                  className="p-4 rounded-xl bg-slate-50/70 border border-slate-200 space-y-3 shadow-sm"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
@@ -108,7 +111,7 @@ export default function GovernanceView({
                     </Badge>
                   </div>
 
-                  <p className="font-mono text-xs text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-sm">
+                  <p className="font-mono text-xs text-slate-700 leading-relaxed bg-white p-3 rounded-lg border border-slate-200 shadow-2xs">
                     {item.body}
                   </p>
 
@@ -148,7 +151,7 @@ export default function GovernanceView({
                       )}
                     </div>
                   </div>
-                </div>
+                </Card3D>
               );
             })
           )}

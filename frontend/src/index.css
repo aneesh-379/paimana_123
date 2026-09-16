@@ -337,6 +337,66 @@ body {
   animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* 3D Modern Visual Animations */
+@keyframes float3d {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotateX(1deg);
+  }
+}
+
+.animate-float-3d {
+  animation: float3d 4s ease-in-out infinite;
+}
+
+@keyframes glowPulse3d {
+  0%, 100% {
+    box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.3), 0 0 15px rgba(124, 58, 237, 0.15);
+  }
+  50% {
+    box-shadow: 0 16px 35px -5px rgba(124, 58, 237, 0.45), 0 0 25px rgba(124, 58, 237, 0.3);
+  }
+}
+
+.animate-glow-3d {
+  animation: glowPulse3d 2.8s ease-in-out infinite;
+}
+
+@keyframes beamTravel {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(1000%);
+    opacity: 0;
+  }
+}
+
+.animate-beam-travel {
+  animation: beamTravel 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
 /* Accessibility: Respect Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
