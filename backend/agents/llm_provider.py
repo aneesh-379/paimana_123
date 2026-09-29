@@ -257,11 +257,52 @@ class LLMProvider:
             "evidence_bundle_used": evidence_bundle
         }
 
+    def _stream_nvidia_nim_api(self, system_prompt: str, user_prompt: str, evidence: Dict[str, Any], fallback_response: str = ""):
+        """Streams response from NVIDIA NIM with fast 2.5s connection timeout."""
+        load_env_file()
+        api_key = os.getenv("LLM_API_KEY", "").strip()
+        model_name = os.getenv("LLM_MODEL", "meta/llama-3.1-8b-instruct").strip()
+        url = "https://integrate.api.nvidia.com/v1/chat/completions"
+
+        prompt_content = f"Grounding Fact Bundle:\n{json.dumps(evidence, indent=2)}\n\nUser Prompt / Query:\n{user_prompt}"
+
+        payload = {
+            "model": model_name,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt_content}
+            ],
+            "temperature": 0.2,
+            "max_tokens": 1024,
+            "stream": True
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
+        }
+
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers)
+        with urllib.request.urlopen(req, timeout=2.5) as resp:
+            for line in resp:
+                line_str = line.decode("utf-8").strip()
+                if line_str.startswith("data: "):
+                    data_content = line_str[6:]
+                    if data_content == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(data_content)
+                        delta = chunk["choices"][0]["delta"].get("content", "")
+                        if delta:
+                            yield delta
+                    except Exception:
+                        pass
+
     def _call_nvidia_nim_api(self, system_prompt: str, user_prompt: str, evidence: Dict[str, Any]) -> str:
         """Calls NVIDIA NIM OpenAI-compatible endpoint using LLM_API_KEY from environment."""
         load_env_file()
         api_key = os.getenv("LLM_API_KEY", "").strip()
-        model_name = os.getenv("LLM_MODEL", "nvidia/llama-3.1-nemotron-70b-instruct").strip()
+        model_name = os.getenv("LLM_MODEL", "meta/llama-3.1-8b-instruct").strip()
         url = "https://integrate.api.nvidia.com/v1/chat/completions"
 
         prompt_content = f"Grounding Fact Bundle:\n{json.dumps(evidence, indent=2)}\n\nUser Prompt / Query:\n{user_prompt}"

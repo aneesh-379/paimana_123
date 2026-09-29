@@ -1,4 +1,4 @@
-go to the path 103 folder   in downloads then foloowthe 3 cmds down as it is
+go to the project root directory then follow the commands below:
 
 backend:
 python -m backend.main  

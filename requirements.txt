@@ -11,7 +11,7 @@ pyyaml
 prometheus-client
 structlog
 opentelemetry-sdk
-opentelemetry-exporter-jaeger
+opentelemetry-exporter-otlp
 requests
 cryptography
 # (plus any optional ML libs you chose, e.g. scikit-learn)

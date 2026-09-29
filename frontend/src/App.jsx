@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ToastProvider, useToast } from './context/ToastContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { useSEO } from './hooks/useSEO';
 import Header from './components/layout/Header';
 import Sidebar from './components/layout/Sidebar';
@@ -23,6 +24,7 @@ import GovernanceView from './views/GovernanceView';
 import NotFoundView from './views/NotFoundView';
 import PrivacyPolicyView from './views/PrivacyPolicyView';
 import TermsView from './views/TermsView';
+import LoginView from './views/LoginView';
 
 // Services & Datasets
 import {
@@ -514,17 +516,40 @@ function CockpitApp() {
         title={confirmationModal.title}
         referenceId={confirmationModal.referenceId}
         message={confirmationModal.message}
-        onViewAuditTrail={() => setActiveTab('audit_trail')}
+        onViewAuditTrail={() => setActiveTab('dashboard')}
         onReturnHome={() => setActiveTab('dashboard')}
       />
     </div>
   );
 }
 
-export default function App() {
+function AppContent() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#070B14] flex flex-col items-center justify-center text-white font-sans">
+        <div className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mb-4" />
+        <p className="text-xs font-mono text-purple-300 tracking-wider">INITIALIZING SUPABASE AUTHENTICATION...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginView />;
+  }
+
   return (
     <ToastProvider>
       <CockpitApp />
     </ToastProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

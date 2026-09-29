@@ -57,18 +57,6 @@ export default function Sidebar({
     { id: 'llm_assistant', label: 'Multi-Agent AI', icon: BrainCircuit, badge: '5 Agents', badgeVariant: 'purple' }
   ];
 
-  // Secondary Governance & Audit items to preserve full functionality
-  const governanceNavItems = [
-    {
-      id: 'early_warnings',
-      label: 'Governance & Warnings',
-      icon: AlertTriangle,
-      badge: pendingWarningsCount > 0 ? `${pendingWarningsCount} Action` : null,
-      badgeVariant: 'warning'
-    },
-    { id: 'audit_trail', label: 'Section 23 Audit Trail', icon: Terminal }
-  ];
-
   const handleItemClick = (id) => {
     onSelectTab(id);
     if (onCloseMobileMenu) {
@@ -246,70 +234,6 @@ export default function Sidebar({
                         <span className="font-medium">{item.label}</span>
                         {item.badge && (
                           <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 bg-purple-500/40 text-purple-200 border border-purple-400/40 rounded-full">
-                            {item.badge}
-                          </span>
-                        )}
-                        <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-slate-900 rotate-45" />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Governance & Compliance Section */}
-          <div className="space-y-1 pt-2 border-t border-slate-100">
-            {!isCollapsed && (
-              <span className="px-3 font-mono text-[9px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">
-                Governance & Oversight
-              </span>
-            )}
-            <div className="space-y-1">
-              {governanceNavItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeTab === item.id;
-
-                return (
-                  <div key={item.id} className="relative group">
-                    <button
-                      onClick={() => handleItemClick(item.id)}
-                      aria-label={item.label}
-                      className={`w-full flex items-center rounded-lg text-xs transition-all text-left focus:outline-none focus:ring-2 focus:ring-purple-400 ${
-                        isCollapsed
-                          ? 'h-10 w-10 mx-auto justify-center'
-                          : 'px-3 py-2 justify-between'
-                      } ${
-                        isActive
-                          ? 'bg-purple-100/90 text-purple-950 font-semibold border border-purple-200/90 shadow-xs'
-                          : 'text-slate-700 hover:text-slate-950 hover:bg-slate-50 border border-transparent font-medium'
-                      }`}
-                    >
-                      <div className={`flex items-center gap-2.5 truncate ${isCollapsed ? 'justify-center' : ''}`}>
-                        <Icon
-                          className={`w-4 h-4 shrink-0 transition-colors ${
-                            isActive ? 'text-purple-700' : 'text-slate-400 group-hover:text-purple-600'
-                          }`}
-                        />
-                        {!isCollapsed && <span className="truncate">{item.label}</span>}
-                      </div>
-
-                      {!isCollapsed && item.badge && (
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full shrink-0 bg-amber-50 text-amber-700 border border-amber-200">
-                          {item.badge}
-                        </span>
-                      )}
-                    </button>
-
-                    {/* Floating Tooltip in Collapsed State */}
-                    {isCollapsed && (
-                      <div
-                        role="tooltip"
-                        className="absolute left-full ml-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 bg-slate-900 text-white text-xs font-sans rounded-md shadow-xl whitespace-nowrap pointer-events-none z-50 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity flex items-center gap-2"
-                      >
-                        <span className="font-medium">{item.label}</span>
-                        {item.badge && (
-                          <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 bg-amber-500/40 text-amber-200 border border-amber-400/40 rounded-full">
                             {item.badge}
                           </span>
                         )}

@@ -58,15 +58,7 @@ export default function IngestionZone({
             Demo CSV
           </Button>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onLoadDemoFile('pdf')}
-            icon={FileText}
-            className="text-slate-600 hover:text-slate-900 bg-white border border-slate-200 shadow-2xs hover:-translate-y-0.5 active:translate-y-0 transition-all font-medium"
-          >
-            Demo PDF
-          </Button>
+
         </div>
       </div>
 

@@ -46,8 +46,6 @@ export default function CommandPalette({ isOpen, onClose, onSelectTab, onTrigger
     { id: 'nav_benchmarking', icon: BarChart2, title: 'Sector & Agency Benchmark Matrix', category: 'Analytics', tab: 'benchmarking' },
     { id: 'nav_drivers', icon: TrendingUp, title: 'Root Cause Overrun Drivers (Pareto)', category: 'Analytics', tab: 'driver_analysis' },
     { id: 'nav_ai', icon: BrainCircuit, title: 'Multi-Agent AI Intelligence Assistant', category: 'AI Tools', tab: 'llm_assistant' },
-    { id: 'nav_warnings', icon: AlertTriangle, title: 'Early Warning Action Center', category: 'Governance', tab: 'early_warnings' },
-    { id: 'nav_audit', icon: Terminal, title: 'Audit Trail & Compliance Records', category: 'Governance', tab: 'audit_trail' },
     { id: 'q_1', icon: Search, title: 'Why is PAIM-619054 flagged high risk?', category: 'Quick Query', prompt: 'Why is Greenfield Expressway Expansion (PAIM-619054) flagged high risk?' },
     { id: 'q_2', icon: Search, title: 'Evaluate GCC Clause 44.1 liquidated damages for delayed project', category: 'Quick Query', prompt: 'Evaluate GCC Clause 44.1 delay compensation and liquidated damages' },
     { id: 'q_3', icon: Search, title: 'Generate MoSPI Level-2 statutory warning notice', category: 'Quick Query', prompt: 'Generate MoSPI Level-2 warning notice for project PAIM-619054' }

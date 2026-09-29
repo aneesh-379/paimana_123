@@ -216,7 +216,7 @@ Frontend UI Rendering (Total Latency: ~128 ms)
 ### Step 1: Start Backend API Server
 ```bash
 # Navigate to workspace root
-cd c:\Users\Aneesh\Downloads\103
+cd paimana_123
 
 # Set PYTHONPATH and launch FastAPI uvicorn server
 $env:PYTHONPATH="."
@@ -226,7 +226,7 @@ uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
 ### Step 2: Start Frontend Application
 ```bash
 # Navigate to frontend directory
-cd c:\Users\Aneesh\Downloads\103\frontend
+cd frontend
 
 # Install dependencies and start Vite dev server
 npm install

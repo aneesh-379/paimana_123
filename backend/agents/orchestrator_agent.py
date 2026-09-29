@@ -320,12 +320,11 @@ class OrchestratorAgent:
         system_prompt = (
             "You are the PAIMANA Chief Decision-Support Officer for MoSPI infrastructure monitoring. "
             "Formulate a structured, authoritative executive brief using the real ML model outputs and 4 sub-agent findings. "
-            "Always include model accuracy metrics (93.6% Cost R² / 90.7% Delay R²) and maintain clean spacing, indented bullets, and bold section headers."
+            "Maintain clean spacing, indented bullets, and bold section headers."
         )
         context_prompt = (
             f"Query: '{query}'\n"
             f"Target: Project {proj_code} ({proj_name})\n"
-            f"Model Performance & Accuracy: SIH26103 CatBoost & ExtraTrees Ensemble (93.6% Cost R², 90.7% Delay R², 98.4% System Confidence)\n"
             f"ML Model Predictions: Forecast Schedule Delay = +{delay} months | Forecast Cost Overrun = +{overrun}% (₹{add_cost} Cr) | Risk Score = {risk_score}/100 ({risk_tier})\n"
             f"SHAP Attributions: {driver_str}\n"
             f"Quantitative Analysis: {quant.get('role_summary', '')}\n"
@@ -348,7 +347,6 @@ class OrchestratorAgent:
         # Deterministic rich template response
         return (
             f"### Executive Summary for {proj_code}: {proj_name}\n\n"
-            f"**Model Accuracy & Evaluation**: SIH26103 Ensemble — **93.6% Cost R²** | **90.7% Delay R²** | **98.4% System Confidence**\n\n"
             f"**1. Trained ML Model Predictive Assessment (Agent I)**\n"
             f"  • **Predicted Schedule Delay**: **+{delay} Months**\n"
             f"  • **Predicted Cost Overrun**: **+{overrun}%** (Estimated additional Rs. {add_cost:.2f} Cr)\n"
